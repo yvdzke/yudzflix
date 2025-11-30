@@ -1,6 +1,7 @@
 import Header from "../components/Fragments/Header";
 import NavBar from "../components/Layout/NavBar";
 import CircularGallery from "../components/Fragments/CircularGalery";
+import Footer from "../components/Layout/Footer";
 
 const MoviePage = () => {
   return (
@@ -19,6 +20,8 @@ const MoviePage = () => {
           scrollEase={0.02}
         />
       </div>
+
+      <Footer></Footer>
     </div>
   );
 };

@@ -2,7 +2,6 @@ const Header = () => {
   return (
     <div className="relative w-full h-[450px] bg-header bg-cover bg-center">
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
-
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/40 to-[#181A1C]"></div>
 
       <div className="absolute bottom-10 left-12 max-w-xl space-y-4">
