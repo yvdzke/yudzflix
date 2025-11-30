@@ -11,32 +11,33 @@ const Footer = () => {
 
         {/* Genre Section */}
         <div>
-          <h3 className="text-white font-semibold mb-4">Genre</h3>
+          <h3 className="text-white font-semibold mb-4">Genres</h3>
           <ul className="space-y-2 text-sm">
-            <li>Aksi</li>
-            <li>Anak-anak</li>
+            <li>Action</li>
+            <li>Kids</li>
             <li>Anime</li>
-            <li>Britania</li>
+            <li>British</li>
             <li>Drama</li>
-            <li>Fantasi Ilmiah & Fantasi</li>
-            <li>Kejahatan</li>
-            <li>KDrama</li>
-            <li>Komedi</li>
-            <li>Petualangan</li>
-            <li>Perang</li>
-            <li>Romantis</li>
-            <li>Sains & Alam</li>
+            <li>Science Fiction & Fantasy</li>
+            <li>Crime</li>
+            <li>K-Drama</li>
+            <li>Comedy</li>
+            <li>Adventure</li>
+            <li>War</li>
+            <li>Romance</li>
+            <li>Science & Nature</li>
             <li>Thriller</li>
           </ul>
         </div>
+
         <div></div>
         <div>
-          <h3 className="text-white font-semibold mb-4">Bantuan</h3>
+          <h3 className="text-white font-semibold mb-4">Help</h3>
           <ul className="space-y-2 text-sm">
             <li>FAQ</li>
-            <li>Kontak Kami</li>
-            <li>Privasi</li>
-            <li>Syarat & Ketentuan</li>
+            <li>Contact Us</li>
+            <li>Privacy</li>
+            <li>Terms & Conditions</li>
           </ul>
         </div>
       </div>

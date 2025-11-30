@@ -1,9 +1,11 @@
 import NavBar from "../components/Layout/NavBar";
 import FrameIP from "../assets/iPhone-12-Pro.png";
+import SplashCursor from "../components/ReactBit/CursorSplash";
 
 const Home = () => {
   return (
     <div className="w-full min-h-screen bg-movie-3 bg-cover flex items-center relative overflow-hidden">
+      <SplashCursor />
       <NavBar></NavBar>
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 px-10 py-20">
         {/* LEFT */}
@@ -15,15 +17,15 @@ const Home = () => {
           <h1 className="text-6xl font-bold text-white mt-3">YudzFlix</h1>
 
           <p className="text-gray-300 mt-6 leading-relaxed">
-            YudzFlix adalah aplikasi berbasis web yang dirancang untuk memberi
-            pengguna akses ke library film dan acara TV yang luas dari perangkat
-            mereka. YudzFLix menawarkan antarmuka yang ramah pengguna yang
-            memungkinkan pengguna mencari film dan acara TV, dan mulai menonton
-            secara instan. YudzFlix menawarkan rekomendasi hasil personalisasi
-            berdasarkan kebiasaan menonton pengguna, membantu pengguna menemukan
-            film dan acara TV baru yang mungkin tidak mereka temukan sebelumnya.
-            Selain itu, YudzFlix juga menawarkan konten orisinal, termasuk film
-            dan acara TV, yang hanya dapat ditemukan di aplikasi YudzFlix.
+            YudzFlix is a web-based application designed to give users access to
+            a wide library of movies and TV shows from their devices. YudzFlix
+            offers a user-friendly interface that allows users to search for
+            movies and TV shows and start watching instantly. It provides
+            personalized recommendations based on users’ viewing habits, helping
+            them discover new movies and shows they might not have found
+            otherwise. In addition, YudzFlix offers original content, including
+            exclusive movies and TV series that can only be found on the
+            YudzFlix platform.
           </p>
         </div>
 
