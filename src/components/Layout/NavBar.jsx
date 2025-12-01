@@ -1,5 +1,7 @@
 import { MdMovie } from "react-icons/md";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import Button from "../Elements/Button/Button";
+import Mypp from "../../assets/img/mypp.jpg";
 
 const NavBar = () => {
   const location = useLocation();
@@ -17,7 +19,17 @@ const NavBar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    navigate("/login");
+    navigate("/");
+  };
+  const storedUser = localStorage.getItem("user");
+  const profileUser = storedUser ? JSON.parse(storedUser).username : null;
+
+  const alertName = () => {
+    const userData = localStorage.getItem("user");
+    if (userData) {
+      const user = JSON.parse(userData);
+      alert(`Hello.. ${user.username}`);
+    }
   };
 
   const isMoviePage = location.pathname === "/movie";
@@ -54,29 +66,26 @@ const NavBar = () => {
       {/* NavBar MoviePage */}
       {!hideBeranda && (
         <div className="flex items-center gap-4 mr-4">
-          <Link to="/movie" className="text-white hover:text-blue-600">
-            Recently Movies
-          </Link>
-          <Link
-            to="/movie"
-            className="text-white px-0 py-1 hover:text-blue-600"
-          >
-            Dashboard
-          </Link>
-          <Link
-            to="/movie"
-            className="text-white px-1 py-1 hover:text-blue-600"
-          >
-            Series
-          </Link>
-
-          {/* LOGOUT BUTTON */}
-          <button
+          <div className="flex gap-2">
+            <p
+              onClick={alertName}
+              className="text-white font-bold mt-3 cursor-pointer"
+            >
+              {profileUser}
+            </p>
+            <img
+              className="w-12 h-12 rounded-full bg-cover"
+              src={Mypp}
+              alt=""
+            />
+          </div>
+          {/* Logout Button */}
+          <Button
+            varian="text-white w-20 h-7 rounded-md border bg-transparent hover:border-indigo-500"
             onClick={handleLogout}
-            className="px-1 py-1  text-white hover:text-blue-700"
           >
             Logout
-          </button>
+          </Button>
         </div>
       )}
     </nav>
