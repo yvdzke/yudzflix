@@ -15,7 +15,7 @@ import { Navigate } from "react-router-dom";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Navigate to="/home" replace />,
+    element: <Home />,
     errorElement: <ErrorPage />,
   },
   {
@@ -27,10 +27,6 @@ const router = createBrowserRouter([
     element: <RegisterPage />,
   },
   {
-    path: "/home",
-    element: <Home />,
-  },
-  {
     path: "/movie",
     element: (
       <ProtectedRoute>
@@ -39,6 +35,7 @@ const router = createBrowserRouter([
     ),
   },
 ]);
+
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <RouterProvider router={router} />
