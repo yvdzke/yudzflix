@@ -2,6 +2,7 @@ import InputForm from "../Elements/Input/index.jsx";
 import Button from "../Elements/Button/Button.jsx";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { registerAuth } from "../../services/auth.service.js";
 
 const FormRegister = () => {
   const navigate = useNavigate();
@@ -16,17 +17,27 @@ const FormRegister = () => {
       return;
     }
 
-    const user = { username, password };
-    localStorage.setItem("user", JSON.stringify(user));
-    alert("Account created! Thanks for joining us.");
-    navigate("/login");
+    const userData = {
+      username,
+      password,
+    };
+
+    registerAuth(userData)
+      .then(() => {
+        alert("Register berhasil, silakan login");
+        navigate("/login");
+      })
+      .catch((err) => {
+        console.error(err);
+        alert("Register gagal");
+      });
   };
 
   return (
     <form onSubmit={handleRegister}>
       <InputForm
         name="username"
-        label=" Create Username"
+        label="Create Username"
         type="text"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
@@ -43,7 +54,7 @@ const FormRegister = () => {
       />
 
       <Button
-        type=""
+        type="submit"
         varian="w-full py-3 bg-[#3D4142] rounded-full hover:bg-gray-700 transition-colors font-medium"
       >
         Register
@@ -51,4 +62,5 @@ const FormRegister = () => {
     </form>
   );
 };
+
 export default FormRegister;

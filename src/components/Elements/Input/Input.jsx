@@ -1,8 +1,17 @@
-const InputForm = ({ label, name, type, placeholder, value, onChange }) => {
+const InputForm = ({
+  label,
+  name,
+  type,
+  placeholder,
+  value,
+  onChange,
+  ref,
+}) => {
   return (
     <div className="flex flex-col space-y-2">
       <label className="text-sm font-medium">{label}</label>
       <input
+        ref={ref}
         name={name}
         type={type}
         placeholder={placeholder}

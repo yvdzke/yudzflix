@@ -1,7 +1,8 @@
 import InputForm from "../Elements/Input/index.jsx";
 import Button from "../Elements/Button/Button.jsx";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useRef } from "react";
+import { getUser } from "../../services/auth.service.js";
 
 const FormLogin = () => {
   const navigate = useNavigate();
@@ -16,18 +17,24 @@ const FormLogin = () => {
       return;
     }
 
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (!user) {
-      alert("");
-      return;
-    }
-    if (user.username === username && user.password === password) {
+    getUser((users) => {
+      const user = users.find(
+        (u) => u.username === username && u.password === password
+      );
+
+      if (!user) {
+        alert("Username or password is incorrect");
+        return;
+      }
+
+      localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("isLogin", "true");
+
       navigate("/movie");
-    } else {
-      alert("Username or password is incorrect");
-    }
+    });
   };
+
+  const emailRef = useRef(null);
 
   return (
     <form onSubmit={handleLogin}>
@@ -38,6 +45,7 @@ const FormLogin = () => {
         type="username"
         value={username}
         placeholder="Enter Your Username"
+        ref={emailRef}
       />
 
       <InputForm

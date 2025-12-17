@@ -1,71 +1,149 @@
+import { useState, useEffect } from "react";
+
 // Components
 import Header from "../components/Fragments/Header";
 import NavBar from "../components/Layout/NavBar";
-import CircularGallery from "../components/Fragments/CircularGalery";
 import Footer from "../components/Layout/Footer";
 import Button from "../components/Elements/Button/Button";
+import CardMovies from "../components/Fragments/CardMovies";
 
-// React
-import { useState } from "react";
+// Assets
+import ArrowRight from "../assets/img/arrow-right.png";
+import ArrowLeft from "../assets/img/arrow-left.png";
 
-//
+// Services
+import { getMovies } from "../services/movie.service";
+
+// Slick
+import Slick from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+const Slider = Slick.default;
+
+// Custom Arrow
+const NextArrow = ({ onClick }) => (
+  <div
+    className="absolute right-[-5px] top-1/2 -translate-y-1/2 z-10
+               cursor-pointer bg-[#0c0c0c] hover:bg-white/40
+               p-3 rounded-full"
+    onClick={onClick}
+  >
+    <img src={ArrowRight} alt="" />
+  </div>
+);
+
+const PrevArrow = ({ onClick }) => (
+  <div
+    className="absolute left-[-5px] top-1/2 -translate-y-1/2 z-10
+               cursor-pointer bg-[#0c0c0c] hover:bg-white/40
+               p-3 rounded-full"
+    onClick={onClick}
+  >
+    <img src={ArrowLeft} alt="" />
+  </div>
+);
+
 const MoviePage = () => {
   const [count, setCount] = useState(0);
+  const [movies, setMovies] = useState([]);
 
-  const handleMinus = () => {
-    setCount((prev) => (prev === 0 ? 0 : prev - 1));
-  };
-  const handlePlus = () => {
-    setCount((prev) => (prev === 20 ? 0 : prev + 1));
+  useEffect(() => {
+    getMovies((data) => {
+      setMovies(data);
+    });
+  }, []);
+
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 4,
+    slidesToScroll: 1,
+    nextArrow: <NextArrow />,
+    prevArrow: <PrevArrow />,
   };
 
-  // Render Area
   return (
     <div className="bg-[#181A1C]">
-      <NavBar></NavBar>
-      <Header></Header>
+      <NavBar />
+      <Header />
 
-      <div className="w-full h-[500px] flex flex-col items-center justify-center relative">
-        <h2 className="absolute text-3xl font-semibold text-white top-20 text-center">
-          Movies
-        </h2>
-        <CircularGallery
-          bend={0}
-          textColor="#ffffff"
-          borderRadius={0.05}
-          scrollEase={0.02}
-        />
-      </div>
-      <div className="flex flex-col items-center justify-center">
-        <h1 className="text-white text-3xl">
-          Simple useState Mission Harisenin FE 2B
+      <div className="flex flex-col gap-10 justify-center items-center">
+        {/* Content 1 */}
+        <h1 className="text-3xl text-white font-bold mb-3 ml-2">
+          Recomend Watch
         </h1>
-        <Button
-          onClick={() => setCount(0)}
-          varian="bg-white py-2 px-3 rounded-md mt-2 "
-        >
-          Reset
-        </Button>
-        <div className="flex flex-raw items-center  gap-3 justify-between max-w-sm">
-          <Button
-            onClick={handleMinus}
-            varian="bg-white py-2 px-3 rounded-md mt-2 "
-          >
-            -
-          </Button>
-          <h1 className="text-white py-2 px-4 border border-white rounded-md mt-2">
-            {count}
-          </h1>
-          <Button
-            onClick={handlePlus}
-            varian="bg-white py-2 px-3 rounded-md mt-2 "
-          >
-            +
-          </Button>
+        <div className="w-[1200px]">
+          <Slider {...settings}>
+            {movies.map((movie) => (
+              <div className="">
+                <CardMovies>
+                  <CardMovies.CardImage
+                    key={movie.id}
+                    img={movie.image}
+                    name={movie.title}
+                  />
+                </CardMovies>
+              </div>
+            ))}
+          </Slider>
         </div>
+        {/* Content 2 */}
+        <h1 className="text-3xl text-white font-bold mb-3 ml-2">
+          Recent Watch
+        </h1>
+        <div className="w-[1200px]">
+          <Slider {...settings}>
+            {movies.map((movie) => (
+              <div className="">
+                <CardMovies>
+                  <CardMovies.CardImage
+                    key={movie.id}
+                    img={movie.image}
+                    name={movie.title}
+                  />
+                </CardMovies>
+              </div>
+            ))}
+          </Slider>
+        </div>
+
+        {/* COUNTER */}
+        <div className="flex flex-col items-center gap-4">
+          <h1 className="text-white text-3xl">
+            Simple useState Mission Harisenin
+          </h1>
+
+          <Button
+            onClick={() => setCount(0)}
+            varian="bg-white py-2 px-4 rounded-md"
+          >
+            Reset
+          </Button>
+
+          <div className="flex gap-4 items-center">
+            <Button
+              onClick={() => setCount((c) => Math.max(0, c - 1))}
+              varian="bg-white py-2 px-4 rounded-md"
+            >
+              -
+            </Button>
+
+            <span className="text-white px-4 py-2 border rounded-md">
+              {count}
+            </span>
+
+            <Button
+              onClick={() => setCount((c) => c + 1)}
+              varian="bg-white py-2 px-4 rounded-md"
+            >
+              +
+            </Button>
+          </div>
+        </div>
+
+        <Footer />
       </div>
-      {console.log("render")}
-      <Footer></Footer>
     </div>
   );
 };

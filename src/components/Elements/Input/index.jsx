@@ -2,7 +2,7 @@ import Input from "./Input";
 import Label from "./Label";
 
 const InputForm = (props) => {
-  const { name, label, placeholder, type, onChange, value } = props;
+  const { name, label, placeholder, type, onChange, value, ref } = props;
   return (
     <div className="mb-4">
       <Label htmlfor={name}>{label}</Label>
@@ -12,6 +12,7 @@ const InputForm = (props) => {
         placeholder={placeholder}
         onChange={onChange}
         value={value}
+        ref={ref}
       ></Input>
     </div>
   );

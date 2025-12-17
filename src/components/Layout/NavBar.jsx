@@ -17,6 +17,7 @@ const NavBar = () => {
     location.pathname === "/register" ||
     location.pathname === "/";
 
+  // Logout Button
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/");
@@ -47,6 +48,16 @@ const NavBar = () => {
         <MdMovie className="text-3xl" />
         YudzFlix
       </Link>
+
+      {!hideBeranda && (
+        <div className="mr-auto ml-10">
+          <ul className=" gap-3 flex text-white">
+            <li>Daftar</li>
+            <li>Daftar</li>
+            <li>Daftar</li>
+          </ul>
+        </div>
+      )}
 
       {/* NavBar Auth */}
       {!hideAuthLinks && (
