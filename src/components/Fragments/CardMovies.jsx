@@ -33,12 +33,13 @@ const CardImage = ({ img, name, variant = "portrait" }) => {
   );
 };
 
-const Overlay = () => {
+const Overlay = (props) => {
+  const { rating, quality } = props;
   return (
     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex items-end p-4">
       <div className="flex justify-between w-full text-white text-sm">
-        <span>★ 4.5 / 5</span>
-        <span>HD</span>
+        <span>{rating}</span>
+        <span>{quality}</span>
       </div>
     </div>
   );

@@ -8,15 +8,15 @@ import CardMovies from "../components/Fragments/CardMovies";
 import Slick from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+const Slider = Slick.default;
 
 // Assets
 import ArrowRight from "../assets/img/arrow-right.png";
 import ArrowLeft from "../assets/img/arrow-left.png";
 
 // Services
-import { getMovies } from "../services/movie.service";
-
-const Slider = Slick.default;
+import { getMovieList } from "../services/movie.service";
+const IMAGE_BASE_URL = import.meta.env.VITE_TMDB_IMAGE_URL;
 
 // ================= ARROW =================
 const NextArrow = ({ onClick }) => (
@@ -59,7 +59,10 @@ const Section = ({ title, movies }) => (
       {movies.map((movie) => (
         <div key={movie.id} className="px-2">
           <CardMovies>
-            <CardMovies.CardImage img={movie.image} name={movie.title} />
+            <CardMovies.CardImage
+              img={`${IMAGE_BASE_URL}${movie.poster_path}`}
+              name={movie.title}
+            />
             <CardMovies.Overlay />
           </CardMovies>
         </div>
@@ -79,13 +82,13 @@ const SectionLandscape = ({ title, movies }) => (
           {/* WRAPPER LANDSCAPE */}
           <div className="relative w-full aspect-video rounded-md overflow-hidden">
             <img
-              src={movie.image}
+              src={`${IMAGE_BASE_URL}${movie.poster_path}`}
               alt={movie.title}
               className="w-full h-full object-cover"
             />
 
             {/* overlay tetap */}
-            <div className="absolute inset-0 bg-black/30 hover:bg-black/50 transition" />
+            <div className="absolute inset-0 hover:bg-black/50 transition" />
           </div>
         </div>
       ))}
@@ -98,8 +101,10 @@ const MoviePage = () => {
   const [movies, setMovies] = useState([]);
 
   useEffect(() => {
-    getMovies((data) => setMovies(data));
+    getMovieList().then((data) => setMovies(data));
   }, []);
+
+  console.log(movies);
 
   return (
     <div className="bg-[#181A1C] min-h-screen">
