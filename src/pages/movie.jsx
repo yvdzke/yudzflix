@@ -20,6 +20,7 @@ import {
   getMovieListTopRate,
   getMovieListUpcoming,
   getMovieTrailer,
+  getMovieSimilar,
 } from "../services/movie.service";
 
 const IMAGE_BASE_URL = import.meta.env.VITE_TMDB_IMAGE_URL;
@@ -154,7 +155,15 @@ const ModalSection = ({ title, movies, onClick }) => (
 );
 
 // ================= MODAL TRAILER =================
-const TrailerModal = ({ movie, trailerKey, onMovieClick, movies, onClose }) => {
+const TrailerModal = ({ movie, trailerKey, onMovieClick, onClose }) => {
+  const [SimilarMovies, setMoviesSimilar] = useState([]);
+
+  useEffect(() => {
+    if (!movie?.id) return;
+
+    getMovieSimilar(movie.id).then(setMoviesSimilar);
+  }, [movie]);
+
   if (!movie) return null;
 
   return (
@@ -201,8 +210,8 @@ const TrailerModal = ({ movie, trailerKey, onMovieClick, movies, onClose }) => {
 
           {/* SECTION DI MODAL */}
           <ModalSection
-            title="More Movies"
-            movies={movies}
+            title="Similar Movies"
+            movies={SimilarMovies}
             onClick={onMovieClick}
           />
         </div>

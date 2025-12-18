@@ -53,3 +53,15 @@ export const getMovieListUpcoming = async () => {
     return [];
   }
 };
+
+export const getMovieSimilar = async (movieId) => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/movie/${movieId}/similar?api_key=${API_KEY}&language=en-US&page=1`
+    );
+    return response.data.results;
+  } catch (error) {
+    console.error("Error fetching similar movies:", error);
+    return [];
+  }
+};
