@@ -57,8 +57,8 @@ const sliderSetting = {
 };
 
 // ================= SECTION NORMAL =================
-const Section = ({ title, movies }) => (
-  <section className="flex flex-col gap-4">
+const Section = ({ title, movies, id }) => (
+  <section id={id} className="flex flex-col gap-4">
     <h2 className="text-white text-xl font-semibold">{title}</h2>
 
     <Slider {...sliderSetting}>
@@ -200,7 +200,7 @@ const MoviePage = () => {
         />
 
         {/* 2 */}
-        <Section title="Top Rated" movies={topRatedMovies} />
+        <Section id="toprated" title="Top Rated" movies={topRatedMovies} />
 
         {/* 3 */}
         <Section title="Movies" movies={movies} />
