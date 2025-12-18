@@ -65,3 +65,15 @@ export const getMovieSimilar = async (movieId) => {
     return [];
   }
 };
+
+export const getMovieNowPlaying = async () => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/movie/now_playing?api_key=${API_KEY}&language=en-US&page=1`
+    );
+    return response.data.results;
+  } catch (error) {
+    console.error("Error fetching now playing movies:", error);
+    return [];
+  }
+};

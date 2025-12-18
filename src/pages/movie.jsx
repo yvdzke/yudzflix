@@ -21,6 +21,7 @@ import {
   getMovieListUpcoming,
   getMovieTrailer,
   getMovieSimilar,
+  getMovieNowPlaying,
 } from "../services/movie.service";
 
 const IMAGE_BASE_URL = import.meta.env.VITE_TMDB_IMAGE_URL;
@@ -156,7 +157,7 @@ const ModalSection = ({ title, movies, onClick }) => (
 
 // ================= MODAL TRAILER =================
 const TrailerModal = ({ movie, trailerKey, onMovieClick, onClose }) => {
-  const [SimilarMovies, setMoviesSimilar] = useState([]);
+  const [similarMovies, setMoviesSimilar] = useState([]);
 
   useEffect(() => {
     if (!movie?.id) return;
@@ -198,22 +199,31 @@ const TrailerModal = ({ movie, trailerKey, onMovieClick, onClose }) => {
               {movie.title || movie.original_title}
             </h3>
 
-            <p className="text-sm text-gray-300 line-clamp-3">
+            <p className="text-sm text-white line-clamp-3">
               {movie.overview || "Overview tidak tersedia."}
             </p>
 
-            <div className="text-xs text-gray-400 flex gap-4 mt-1">
-              <span>⭐ {movie.vote_average}</span>
-              <span>{movie.release_date}</span>
+            <div className="text-xs text-gray-400 flex gap-2 mt-1">
+              <span className="border text-white border-white p-1 rounded-md items-center">
+                ⭐ {movie.vote_average}
+              </span>
+              <span className="border text-white border-white p-1 rounded-md items-center">
+                {movie.release_date}
+              </span>
             </div>
           </div>
 
           {/* SECTION DI MODAL */}
-          <ModalSection
-            title="Similar Movies"
-            movies={SimilarMovies}
-            onClick={onMovieClick}
-          />
+
+          {similarMovies.length === 0 ? (
+            <p className="text-gray-400">No similar movies found.</p>
+          ) : (
+            <ModalSection
+              title="Similar Movies"
+              movies={similarMovies}
+              onClick={onMovieClick}
+            />
+          )}
         </div>
       </div>
     </div>
@@ -260,6 +270,7 @@ const MoviePage = () => {
   const [movies, setMovies] = useState([]);
   const [topRatedMovies, setTopRatedMovies] = useState([]);
   const [upcomingMovies, setUpcomingMovies] = useState([]);
+  const [nowPlayingMovies, setNowPlayingMovies] = useState([]);
   const [activeMovie, setActiveMovie] = useState(null);
   const [trailerKey, setTrailerKey] = useState(null);
 
@@ -267,6 +278,7 @@ const MoviePage = () => {
     getMovieList().then(setMovies);
     getMovieListTopRate().then(setTopRatedMovies);
     getMovieListUpcoming().then(setUpcomingMovies);
+    getMovieNowPlaying().then(setNowPlayingMovies);
   }, []);
 
   const handleClickMovie = async (movie) => {
@@ -288,11 +300,11 @@ const MoviePage = () => {
       <div className="max-w-[1300px] mx-auto px-6 flex flex-col gap-14 py-10">
         <SectionLandscape
           title="Recent Movies"
-          movies={movies}
+          movies={nowPlayingMovies}
           onClick={handleClickMovie}
         />
 
-        <Section title="Movies" movies={movies} onClick={handleClickMovie} />
+        <Section title="Movies" movies={movies} />
 
         <Section
           id="toprated"
@@ -316,7 +328,7 @@ const MoviePage = () => {
         trailerKey={trailerKey}
         onClose={handleCloseModal}
         onMovieClick={handleClickMovie}
-        movies={movies} // ✅ FIX UTAMA
+        movies={movies}
       />
     </div>
   );

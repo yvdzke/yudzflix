@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 const Header = () => {
-  const youtubeId = "TcMBFSGVi1c"; // ganti sesuai trailer
+  const youtubeId = "U0MOoyI7pIM"; // ganti sesuai trailer
   const playerRef = useRef(null);
   const [isMuted, setIsMuted] = useState(true);
 
@@ -52,10 +52,9 @@ const Header = () => {
 
   return (
     <div className="relative w-full h-[450px] overflow-hidden">
-      {/* YOUTUBE BACKGROUND */}
       <iframe
         id="yt-bg"
-        className="absolute top-1/2 left-1/2 w-[120%] h-[120%]
+        className="absolute top-1/2 left-1/2 w-[120%] h-[120%] rounded-md
                    -translate-x-1/2 -translate-y-1/2 pointer-events-none"
         src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1&mute=1&loop=1&controls=0&rel=0&playlist=${youtubeId}&enablejsapi=1`}
         frameBorder="0"
