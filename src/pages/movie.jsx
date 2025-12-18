@@ -15,7 +15,12 @@ import ArrowRight from "../assets/img/arrow-right.png";
 import ArrowLeft from "../assets/img/arrow-left.png";
 
 // Services
-import { getMovieList, getMovieTrailer } from "../services/movie.service";
+import {
+  getMovieList,
+  getMovieListTopRate,
+  getMovieListUpcoming,
+  getMovieTrailer,
+} from "../services/movie.service";
 
 const IMAGE_BASE_URL = import.meta.env.VITE_TMDB_IMAGE_URL;
 
@@ -79,9 +84,12 @@ const TrailerModal = ({ movie, trailerKey, onClose }) => {
   return (
     <div
       className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center"
-      onMouseLeave={onClose}
+      onClick={onClose}
     >
-      <div className="w-[700px] max-w-[90%] bg-[#181A1C] rounded-xl overflow-hidden shadow-xl">
+      <div
+        className="w-[700px] max-w-[90%] bg-[#181A1C] rounded-xl overflow-hidden shadow-xl"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* VIDEO */}
         <div className="w-full aspect-video bg-black">
           {trailerKey ? (
@@ -119,26 +127,24 @@ const TrailerModal = ({ movie, trailerKey, onClose }) => {
 };
 
 // ================= LANDSCAPE CARD =================
-const LandscapeCard = ({ movie, onHover }) => {
-  return (
-    <div
-      className="relative w-full aspect-video rounded-md overflow-hidden cursor-pointer"
-      onMouseEnter={() => onHover(movie)}
-    >
-      <img
-        src={`${IMAGE_BASE_URL}${movie.backdrop_path || movie.poster_path}`}
-        alt={movie.title}
-        className="w-full h-full object-cover"
-      />
+const LandscapeCard = ({ movie, onHover }) => (
+  <div
+    className="relative w-full aspect-video rounded-md overflow-hidden cursor-pointer"
+    onMouseEnter={() => onHover(movie)}
+  >
+    <img
+      src={`${IMAGE_BASE_URL}${movie.backdrop_path || movie.poster_path}`}
+      alt={movie.title}
+      className="w-full h-full object-cover"
+    />
 
-      <div className="absolute inset-0 bg-black/30 opacity-0 hover:opacity-100 transition" />
+    <div className="absolute inset-0 bg-black/30 opacity-0 hover:opacity-100 transition" />
 
-      <div className="absolute bottom-0 left-0 right-0 p-3 bg-black/60 text-white text-sm">
-        {movie.title}
-      </div>
+    <div className="absolute bottom-0 left-0 right-0 p-3 bg-black/60 text-white text-sm">
+      {movie.title}
     </div>
-  );
-};
+  </div>
+);
 
 // ================= SECTION LANDSCAPE =================
 const SectionLandscape = ({ title, movies, onHover }) => (
@@ -158,11 +164,15 @@ const SectionLandscape = ({ title, movies, onHover }) => (
 // ================= PAGE =================
 const MoviePage = () => {
   const [movies, setMovies] = useState([]);
+  const [topRatedMovies, setTopRatedMovies] = useState([]);
+  const [upcomingMovies, setUpcomingMovies] = useState([]);
   const [activeMovie, setActiveMovie] = useState(null);
   const [trailerKey, setTrailerKey] = useState(null);
 
   useEffect(() => {
-    getMovieList().then((data) => setMovies(data));
+    getMovieList().then(setMovies);
+    getMovieListTopRate().then(setTopRatedMovies);
+    getMovieListUpcoming().then(setUpcomingMovies);
   }, []);
 
   const handleHoverMovie = async (movie) => {
@@ -184,19 +194,19 @@ const MoviePage = () => {
       <div className="max-w-[1300px] mx-auto px-6 flex flex-col gap-14 py-10">
         {/* 1 — LANDSCAPE */}
         <SectionLandscape
-          title="Melanjutkan Tonton Film"
+          title="Recent Movies"
           movies={movies}
           onHover={handleHoverMovie}
         />
 
         {/* 2 */}
-        <Section title="Top Rating Film dan Series Hari Ini" movies={movies} />
+        <Section title="Top Rated" movies={topRatedMovies} />
 
         {/* 3 */}
-        <Section title="Film Trending" movies={movies} />
+        <Section title="Movies" movies={movies} />
 
         {/* 4 */}
-        <Section title="Rilis Baru" movies={movies} />
+        <Section title="Upcoming" movies={upcomingMovies} />
       </div>
 
       <Footer />

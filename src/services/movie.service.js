@@ -30,3 +30,26 @@ export const getMovieTrailer = async (movieId) => {
     return null;
   }
 };
+
+export const getMovieListTopRate = async () => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/movie/top_rated?api_key=${API_KEY}&language=en-US&page=1`
+    );
+    return response.data.results;
+  } catch (error) {
+    console.error("Error fetching top rated movies:", error);
+    return [];
+  }
+};
+export const getMovieListUpcoming = async () => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/movie/upcoming?api_key=${API_KEY}&language=en-US&page=1`
+    );
+    return response.data.results;
+  } catch (error) {
+    console.error("Error fetching upcoming movies:", error);
+    return [];
+  }
+};
