@@ -10,6 +10,7 @@ import RegisterPage from "./pages/register";
 import ErrorPage from "./pages/404.jsx";
 import Home from "./pages/home.jsx";
 import ProtectedRoute from "./pages/protectrouter.jsx";
+import ProfilePage from "./pages/profile.jsx";
 import { Navigate } from "react-router-dom";
 
 const router = createBrowserRouter([
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
   {
     path: "/register",
     element: <RegisterPage />,
+  },
+  {
+    path: "/profile",
+    element: <ProfilePage />,
   },
   {
     path: "/movie",
