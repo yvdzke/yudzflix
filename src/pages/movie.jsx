@@ -45,7 +45,7 @@ const PrevArrow = ({ onClick }) => (
   </div>
 );
 
-// ================= SLIDER SETTING =================
+// ================= SLIDER SETTING SECTION NORMAL =================
 const sliderSetting = {
   dots: false,
   infinite: true,
@@ -54,23 +54,99 @@ const sliderSetting = {
   slidesToScroll: 1,
   nextArrow: <NextArrow />,
   prevArrow: <PrevArrow />,
+
+  responsive: [
+    {
+      breakpoint: 1280,
+      settings: {
+        slidesToShow: 5,
+      },
+    },
+    {
+      breakpoint: 1024,
+      settings: {
+        slidesToShow: 4,
+      },
+    },
+    {
+      breakpoint: 768,
+      settings: {
+        slidesToShow: 3,
+      },
+    },
+    {
+      breakpoint: 480,
+      settings: {
+        slidesToShow: 2,
+      },
+    },
+  ],
 };
 
-// ================= SECTION NORMAL =================
-const Section = ({ title, movies, id }) => (
+// ================= SLIDER SETTING MODAL =================
+const modalSliderSetting = {
+  dots: false,
+  infinite: true,
+  speed: 500,
+  slidesToShow: 3,
+  slidesToScroll: 1,
+  nextArrow: <NextArrow />,
+  prevArrow: <PrevArrow />,
+  responsive: [
+    {
+      breakpoint: 1024,
+      settings: {
+        slidesToShow: 2,
+      },
+    },
+    {
+      breakpoint: 640,
+      settings: {
+        slidesToShow: 1,
+      },
+    },
+  ],
+};
+
+// ================= SECTION PORTRAIT =================
+const Section = ({ title, movies = [], id, onClick }) => (
   <section id={id} className="flex flex-col gap-4">
     <h2 className="text-white text-xl font-semibold">{title}</h2>
 
     <Slider {...sliderSetting}>
       {movies.map((movie) => (
         <div key={movie.id} className="px-2">
-          <CardMovies>
-            <CardMovies.CardImage
-              img={`${IMAGE_BASE_URL}${movie.poster_path}`}
-              name={movie.title}
-            />
-            <CardMovies.Overlay original_title={movie.original_title} />
-          </CardMovies>
+          <div onClick={() => onClick(movie)} className="cursor-pointer">
+            <CardMovies>
+              <CardMovies.CardImage
+                img={`${IMAGE_BASE_URL}${movie.poster_path}`}
+                name={movie.title}
+              />
+              <CardMovies.Overlay original_title={movie.original_title} />
+            </CardMovies>
+          </div>
+        </div>
+      ))}
+    </Slider>
+  </section>
+);
+
+const ModalSection = ({ title, movies, onClick }) => (
+  <section className="flex flex-col gap-4 mt-6">
+    <h2 className="text-white text-lg font-semibold">{title}</h2>
+
+    <Slider {...modalSliderSetting}>
+      {movies.map((movie) => (
+        <div key={movie.id} className="px-2">
+          <div onClick={() => onClick(movie)} className="cursor-pointer">
+            <CardMovies>
+              <CardMovies.CardImage
+                img={`${IMAGE_BASE_URL}${movie.poster_path}`}
+                name={movie.title}
+              />
+              <CardMovies.Overlay original_title={movie.original_title} />
+            </CardMovies>
+          </div>
         </div>
       ))}
     </Slider>
@@ -78,7 +154,7 @@ const Section = ({ title, movies, id }) => (
 );
 
 // ================= MODAL TRAILER =================
-const TrailerModal = ({ movie, trailerKey, onClose }) => {
+const TrailerModal = ({ movie, trailerKey, onMovieClick, movies, onClose }) => {
   if (!movie) return null;
 
   return (
@@ -95,7 +171,7 @@ const TrailerModal = ({ movie, trailerKey, onClose }) => {
           {trailerKey ? (
             <iframe
               className="w-full h-full"
-              src={`https://www.youtube.com/embed/${trailerKey}?autoplay=1&mute=1&controls=1`}
+              src={`https://www.youtube.com/embed/${trailerKey}?autoplay=1&unmute=1&controls=1`}
               allow="autoplay"
               allowFullScreen
             />
@@ -107,19 +183,28 @@ const TrailerModal = ({ movie, trailerKey, onClose }) => {
         </div>
 
         {/* INFO */}
-        <div className="p-4 text-white flex flex-col gap-2">
-          <h3 className="text-lg font-semibold">
-            {movie.title || movie.original_title}
-          </h3>
+        <div className="p-4 text-white flex flex-col gap-4">
+          <div>
+            <h3 className="text-lg font-semibold">
+              {movie.title || movie.original_title}
+            </h3>
 
-          <p className="text-sm text-gray-300 line-clamp-3">
-            {movie.overview || "Overview tidak tersedia."}
-          </p>
+            <p className="text-sm text-gray-300 line-clamp-3">
+              {movie.overview || "Overview tidak tersedia."}
+            </p>
 
-          <div className="text-xs text-gray-400 flex gap-4">
-            <span>⭐ {movie.vote_average}</span>
-            <span>{movie.release_date}</span>
+            <div className="text-xs text-gray-400 flex gap-4 mt-1">
+              <span>⭐ {movie.vote_average}</span>
+              <span>{movie.release_date}</span>
+            </div>
           </div>
+
+          {/* SECTION DI MODAL */}
+          <ModalSection
+            title="More Movies"
+            movies={movies}
+            onClick={onMovieClick}
+          />
         </div>
       </div>
     </div>
@@ -127,10 +212,10 @@ const TrailerModal = ({ movie, trailerKey, onClose }) => {
 };
 
 // ================= LANDSCAPE CARD =================
-const LandscapeCard = ({ movie, onHover }) => (
+const LandscapeCard = ({ movie, onClick }) => (
   <div
     className="relative w-full aspect-video rounded-md overflow-hidden cursor-pointer"
-    onMouseEnter={() => onHover(movie)}
+    onClick={() => onClick(movie)}
   >
     <img
       src={`${IMAGE_BASE_URL}${movie.backdrop_path || movie.poster_path}`}
@@ -147,14 +232,14 @@ const LandscapeCard = ({ movie, onHover }) => (
 );
 
 // ================= SECTION LANDSCAPE =================
-const SectionLandscape = ({ title, movies, onHover }) => (
+const SectionLandscape = ({ title, movies, onClick }) => (
   <section className="flex flex-col gap-4">
     <h2 className="text-white text-xl font-semibold">{title}</h2>
 
     <Slider {...sliderSetting}>
       {movies.map((movie) => (
         <div key={movie.id} className="px-2">
-          <LandscapeCard movie={movie} onHover={onHover} />
+          <LandscapeCard movie={movie} onClick={onClick} />
         </div>
       ))}
     </Slider>
@@ -175,7 +260,7 @@ const MoviePage = () => {
     getMovieListUpcoming().then(setUpcomingMovies);
   }, []);
 
-  const handleHoverMovie = async (movie) => {
+  const handleClickMovie = async (movie) => {
     setActiveMovie(movie);
     const key = await getMovieTrailer(movie.id);
     setTrailerKey(key);
@@ -192,21 +277,26 @@ const MoviePage = () => {
       <Header />
 
       <div className="max-w-[1300px] mx-auto px-6 flex flex-col gap-14 py-10">
-        {/* 1 — LANDSCAPE */}
         <SectionLandscape
           title="Recent Movies"
           movies={movies}
-          onHover={handleHoverMovie}
+          onClick={handleClickMovie}
         />
 
-        {/* 2 */}
-        <Section id="toprated" title="Top Rated" movies={topRatedMovies} />
+        <Section
+          id="toprated"
+          title="Top Rated"
+          movies={topRatedMovies}
+          onClick={handleClickMovie}
+        />
 
-        {/* 3 */}
-        <Section title="Movies" movies={movies} />
+        <Section title="Movies" movies={movies} onClick={handleClickMovie} />
 
-        {/* 4 */}
-        <Section title="Upcoming" movies={upcomingMovies} />
+        <Section
+          title="Upcoming"
+          movies={upcomingMovies}
+          onClick={handleClickMovie}
+        />
       </div>
 
       <Footer />
@@ -216,6 +306,8 @@ const MoviePage = () => {
         movie={activeMovie}
         trailerKey={trailerKey}
         onClose={handleCloseModal}
+        onMovieClick={handleClickMovie}
+        movies={movies} // ✅ FIX UTAMA
       />
     </div>
   );
