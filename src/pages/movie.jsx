@@ -15,7 +15,8 @@ import ArrowRight from "../assets/img/arrow-right.png";
 import ArrowLeft from "../assets/img/arrow-left.png";
 
 // Services
-import { getMovieList } from "../services/movie.service";
+import { getMovieList, getMovieTrailer } from "../services/movie.service";
+
 const IMAGE_BASE_URL = import.meta.env.VITE_TMDB_IMAGE_URL;
 
 // ================= ARROW =================
@@ -63,7 +64,7 @@ const Section = ({ title, movies }) => (
               img={`${IMAGE_BASE_URL}${movie.poster_path}`}
               name={movie.title}
             />
-            <CardMovies.Overlay />
+            <CardMovies.Overlay original_title={movie.original_title} />
           </CardMovies>
         </div>
       ))}
@@ -71,7 +72,57 @@ const Section = ({ title, movies }) => (
   </section>
 );
 
-// ================= SECTION LANDSCAPE (KHUSUS) =================
+// ================= LANDSCAPE CARD (HOVER TRAILER) =================
+const LandscapeCard = ({ movie }) => {
+  const [hover, setHover] = useState(false);
+  const [trailerKey, setTrailerKey] = useState(null);
+
+  const handleMouseEnter = async () => {
+    setHover(true);
+    if (!trailerKey) {
+      const key = await getMovieTrailer(movie.id);
+      setTrailerKey(key);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setHover(false);
+  };
+
+  return (
+    <div
+      className="relative w-full aspect-video rounded-md overflow-hidden"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      {/* IMAGE */}
+      {!hover && (
+        <img
+          src={`${IMAGE_BASE_URL}${movie.backdrop_path || movie.poster_path}`}
+          alt={movie.title}
+          className="w-full h-full object-cover"
+        />
+      )}
+
+      {/* TRAILER */}
+      {hover && trailerKey && (
+        <iframe
+          className="w-full h-full"
+          src={`https://www.youtube.com/embed/${trailerKey}?autoplay=1&mute=1&controls=0`}
+          allow="autoplay"
+          allowFullScreen
+        />
+      )}
+
+      {/* OVERLAY TITLE */}
+      <div className="absolute bottom-0 left-0 right-0 p-3 bg-black/60 text-white text-sm">
+        {movie.title}
+      </div>
+    </div>
+  );
+};
+
+// ================= SECTION LANDSCAPE =================
 const SectionLandscape = ({ title, movies }) => (
   <section className="flex flex-col gap-4">
     <h2 className="text-white text-xl font-semibold">{title}</h2>
@@ -79,17 +130,7 @@ const SectionLandscape = ({ title, movies }) => (
     <Slider {...sliderSetting}>
       {movies.map((movie) => (
         <div key={movie.id} className="px-2">
-          {/* WRAPPER LANDSCAPE */}
-          <div className="relative w-full aspect-video rounded-md overflow-hidden">
-            <img
-              src={`${IMAGE_BASE_URL}${movie.poster_path}`}
-              alt={movie.title}
-              className="w-full h-full object-cover"
-            />
-
-            {/* overlay tetap */}
-            <div className="absolute inset-0 hover:bg-black/50 transition" />
-          </div>
+          <LandscapeCard movie={movie} />
         </div>
       ))}
     </Slider>
@@ -103,8 +144,6 @@ const MoviePage = () => {
   useEffect(() => {
     getMovieList().then((data) => setMovies(data));
   }, []);
-
-  console.log(movies);
 
   return (
     <div className="bg-[#181A1C] min-h-screen">

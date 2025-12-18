@@ -13,3 +13,20 @@ export const getMovieList = async () => {
     return [];
   }
 };
+
+export const getMovieTrailer = async (movieId) => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/movie/${movieId}/videos?api_key=${API_KEY}&language=en-US`
+    );
+
+    const trailer = response.data.results.find(
+      (video) => video.type === "Trailer" && video.site === "YouTube"
+    );
+
+    return trailer ? trailer.key : null;
+  } catch (error) {
+    console.error("Error fetching trailer:", error);
+    return null;
+  }
+};
