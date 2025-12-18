@@ -283,14 +283,14 @@ const MoviePage = () => {
           onClick={handleClickMovie}
         />
 
+        <Section title="Movies" movies={movies} onClick={handleClickMovie} />
+
         <Section
           id="toprated"
           title="Top Rated"
           movies={topRatedMovies}
           onClick={handleClickMovie}
         />
-
-        <Section title="Movies" movies={movies} onClick={handleClickMovie} />
 
         <Section
           title="Upcoming"
