@@ -118,13 +118,16 @@ const Section = ({ title, movies = [], id, onClick }) => (
     <Slider {...sliderSetting}>
       {movies.map((movie) => (
         <div key={movie.id} className="px-2">
-          <div onClick={() => onClick(movie)} className="cursor-pointer">
+          <div className="cursor-pointer">
             <CardMovies>
               <CardMovies.CardImage
                 img={`${IMAGE_BASE_URL}${movie.poster_path}`}
                 name={movie.title}
               />
-              <CardMovies.Overlay original_title={movie.original_title} />
+              <CardMovies.Overlay
+                onClick={() => onClick(movie)}
+                original_title={movie.original_title}
+              />
             </CardMovies>
           </div>
         </div>
@@ -195,9 +198,7 @@ const TrailerModal = ({ movie, trailerKey, onMovieClick, onClose }) => {
         {/* INFO */}
         <div className="p-4 text-white flex flex-col gap-4">
           <div>
-            <h3 className="text-lg font-semibold">
-              {movie.title || movie.original_title}
-            </h3>
+            <h3 className="text-lg font-semibold">{movie.original_title}</h3>
 
             <p className="text-sm text-white line-clamp-3">
               {movie.overview || "Overview tidak tersedia."}
@@ -304,7 +305,7 @@ const MoviePage = () => {
           onClick={handleClickMovie}
         />
 
-        <Section title="Movies" movies={movies} />
+        <Section title="Movies" movies={movies} onClick={handleClickMovie} />
 
         <Section
           id="toprated"
