@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { MdMovie } from "react-icons/md";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import Mypp from "../../assets/img/mypp.jpg";
 import { deleteUser } from "../../services/auth.service";
 
 const NavBar = () => {
@@ -109,7 +108,11 @@ const NavBar = () => {
             className="flex items-center gap-2 cursor-pointer"
           >
             <p className="text-white font-bold">{profileUser}</p>
-            <img src={Mypp} alt="profile" className="w-10 h-10 rounded-full" />
+            <img
+              src="https://res.cloudinary.com/dvym5vxsw/image/upload/v1766191504/mypp_h0ujrc.jpg"
+              alt="profile"
+              className="w-10 h-10 rounded-full"
+            />
           </div>
 
           {/* Dropdown */}

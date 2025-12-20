@@ -4,7 +4,7 @@ import NavBar from "../components/Layout/NavBar.jsx";
 
 const RegisterPage = () => {
   return (
-    <div className="bg-2 bg-cover bg-center h-screen">
+    <div className="bg-register bg-cover bg-center h-screen">
       <NavBar></NavBar>
       <AuthLayouts tittle="Register" type="register">
         <FormRegister />

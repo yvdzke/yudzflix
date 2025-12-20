@@ -4,7 +4,7 @@ import NavBar from "../components/Layout/NavBar.jsx";
 
 const LoginPage = () => {
   return (
-    <div className="bg-3 bg-cover bg-center h-screen">
+    <div className="bg-login bg-cover bg-center h-screen">
       <NavBar></NavBar>
       <AuthLayouts tittle="Login" type="login">
         <FormLogin />

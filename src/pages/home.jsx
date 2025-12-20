@@ -1,5 +1,4 @@
 import NavBar from "../components/Layout/NavBar";
-import FrameIP from "../assets/img/ip.png";
 import SplashCursor from "../components/ReactBit/CursorSplash";
 
 const Home = () => {
@@ -32,7 +31,7 @@ const Home = () => {
         {/* RIGHT */}
         <div className="flex justify-center items-center">
           <img
-            src={FrameIP}
+            src="https://res.cloudinary.com/dvym5vxsw/image/upload/v1766191504/ip_zrtbxv.png"
             className="w-[600px] absolute bottom-[-4%] rotate-6 drop-shadow-2xl"
             alt="app preview"
           />

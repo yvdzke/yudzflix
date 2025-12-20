@@ -6,13 +6,13 @@
 
 /* Images Start */
 .bg-1 {
-  background-image: url("/src/assets/img/bg-1.jpg");
+  background-image: url("https://res.cloudinary.com/dvym5vxsw/image/upload/v1766192005/bg-1_bxytm9.jpg");
 }
-.bg-2 {
-  background-image: url("/src/assets/img/bg-2.jpg");
+.bg-register {
+  background-image: url("https://res.cloudinary.com/dvym5vxsw/image/upload/v1766191504/bg-2_ftfgvk.jpg");
 }
-.bg-3 {
-  background-image: url("/src/assets/img/bg-3.jpg");
+.bg-login {
+  background-image: url("https://res.cloudinary.com/dvym5vxsw/image/upload/v1766191504/bg-3_cv3ttd.jpg");
 }
 .bg-header {
   background-image: url("https://www.youtube.com/embed/R4wiXj9NmEE?si=cSRymUkWl9VQNp3_&amp;start=2");
