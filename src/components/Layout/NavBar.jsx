@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { MdMovie } from "react-icons/md";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Mypp from "../../assets/img/mypp.jpg";
+import { deleteUser } from "../../services/auth.service";
 
 const NavBar = () => {
   const location = useLocation();
@@ -9,6 +10,20 @@ const NavBar = () => {
 
   const [openProfile, setOpenProfile] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+
+  // Delete User Logic
+  const handleDeleteUser = () => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      const userId = JSON.parse(storedUser).id;
+      console.log("USER ID:", userId);
+      deleteUser(userId).then(() => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        navigate("/");
+      });
+    }
+  };
 
   const hideAuthLinks =
     location.pathname === "/login" ||
@@ -115,6 +130,12 @@ const NavBar = () => {
                 className="block w-full text-left px-4 py-3 text-red-400 hover:bg-gray-800"
               >
                 Logout
+              </button>
+              <button
+                onClick={handleDeleteUser}
+                className="block w-full text-left px-4 py-3 text-red-400 hover:bg-gray-800"
+              >
+                Delete User
               </button>
             </div>
           )}

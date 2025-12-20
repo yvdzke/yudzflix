@@ -8,6 +8,7 @@ const FormLogin = () => {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [loginFailed, setLoginFailed] = useState("");
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -23,7 +24,7 @@ const FormLogin = () => {
       );
 
       if (!user) {
-        alert("Username or password is incorrect");
+        setLoginFailed("Invalid username or password");
         return;
       }
 
@@ -38,6 +39,7 @@ const FormLogin = () => {
 
   return (
     <form onSubmit={handleLogin}>
+      <p className="text-red-600">{loginFailed}</p>
       <InputForm
         name="username"
         label="Username"
@@ -47,7 +49,6 @@ const FormLogin = () => {
         placeholder="Enter Your Username"
         ref={emailRef}
       />
-
       <InputForm
         name="password"
         label="Password"
@@ -57,7 +58,6 @@ const FormLogin = () => {
         type="password"
         placeholder="****"
       />
-
       <Button
         type="submit"
         varian="w-full py-3 bg-[#3D4142] rounded-full hover:bg-gray-700 transition-colors font-medium"

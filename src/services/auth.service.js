@@ -18,7 +18,5 @@ export const getUser = (callback) => {
 };
 
 export const deleteUser = (id) => {
-  return axios.delete(
-    `https://69424ac3686bc3ca81692912.mockapi.io/yvdzke/users/${id}`
-  );
+  return axios.delete(`${AUTH_URL}/${id}`);
 };

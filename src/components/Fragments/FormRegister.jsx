@@ -24,12 +24,11 @@ const FormRegister = () => {
 
     registerAuth(userData)
       .then(() => {
-        alert("Register berhasil, silakan login");
         navigate("/login");
       })
       .catch((err) => {
         console.error(err);
-        alert("Register gagal");
+        alert("Register Failed. Please try again.");
       });
   };
 
