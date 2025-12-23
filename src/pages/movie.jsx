@@ -110,6 +110,7 @@ const modalSliderSetting = {
   ],
 };
 
+// ================ SECTION START =================
 // ================= SECTION PORTRAIT =================
 const Section = ({ title, movies = [], id, onClick }) => (
   <section id={id} className="flex flex-col gap-4">
@@ -136,6 +137,22 @@ const Section = ({ title, movies = [], id, onClick }) => (
   </section>
 );
 
+// ================= SECTION LANDSCAPE =================
+const SectionLandscape = ({ title, movies, onClick }) => (
+  <section className="flex flex-col gap-4">
+    <h2 className="text-white text-xl font-semibold">{title}</h2>
+
+    <Slider {...sliderSetting}>
+      {movies.map((movie) => (
+        <div key={movie.id} className="px-2">
+          <LandscapeCard movie={movie} onClick={onClick} />
+        </div>
+      ))}
+    </Slider>
+  </section>
+);
+
+// ================= SECTION MODAL =================
 const ModalSection = ({ title, movies, onClick }) => (
   <section className="flex flex-col gap-4 mt-6">
     <h2 className="text-white text-lg font-semibold">{title}</h2>
@@ -157,6 +174,7 @@ const ModalSection = ({ title, movies, onClick }) => (
     </Slider>
   </section>
 );
+// ================ SECTION END =================
 
 // ================= MODAL TRAILER =================
 const TrailerModal = ({ movie, trailerKey, onMovieClick, onClose }) => {
@@ -251,21 +269,6 @@ const LandscapeCard = ({ movie, onClick }) => (
   </div>
 );
 
-// ================= SECTION LANDSCAPE =================
-const SectionLandscape = ({ title, movies, onClick }) => (
-  <section className="flex flex-col gap-4">
-    <h2 className="text-white text-xl font-semibold">{title}</h2>
-
-    <Slider {...sliderSetting}>
-      {movies.map((movie) => (
-        <div key={movie.id} className="px-2">
-          <LandscapeCard movie={movie} onClick={onClick} />
-        </div>
-      ))}
-    </Slider>
-  </section>
-);
-
 // ================= PAGE =================
 const MoviePage = () => {
   const [movies, setMovies] = useState([]);
@@ -275,6 +278,7 @@ const MoviePage = () => {
   const [activeMovie, setActiveMovie] = useState(null);
   const [trailerKey, setTrailerKey] = useState(null);
 
+  // useEffect to fetch movie lists on component mount
   useEffect(() => {
     getMovieList().then(setMovies);
     getMovieListTopRate().then(setTopRatedMovies);
@@ -282,12 +286,14 @@ const MoviePage = () => {
     getMovieNowPlaying().then(setNowPlayingMovies);
   }, []);
 
+  // Handle movie click to open modal and fetch trailer
   const handleClickMovie = async (movie) => {
     setActiveMovie(movie);
     const key = await getMovieTrailer(movie.id);
     setTrailerKey(key);
   };
 
+  // Handle close modal
   const handleCloseModal = () => {
     setActiveMovie(null);
     setTrailerKey(null);
@@ -304,21 +310,22 @@ const MoviePage = () => {
           movies={nowPlayingMovies}
           onClick={handleClickMovie}
         />
-
+        {/* SECTION MOVIES */}
         <Section title="Movies" movies={movies} onClick={handleClickMovie} />
-
+        {/* SECTION TOP RATED */}
         <Section
           id="toprated"
           title="Top Rated"
           movies={topRatedMovies}
           onClick={handleClickMovie}
         />
-
+        {/* SECTION UPCOMING */}
         <Section
           title="Upcoming"
           movies={upcomingMovies}
           onClick={handleClickMovie}
         />
+        <Section title="My Favorite" />
       </div>
 
       <Footer />
@@ -334,5 +341,5 @@ const MoviePage = () => {
     </div>
   );
 };
-
+// yvdzke
 export default MoviePage;

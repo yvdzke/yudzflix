@@ -74,9 +74,7 @@ const NavBar = () => {
           <ul className="flex gap-6 text-white font-medium">
             <li className="cursor-pointer hover:text-gray-400">Series</li>
             <li className="cursor-pointer hover:text-gray-400">Film</li>
-            <li className="cursor-pointer hover:text-gray-400">
-              My Movie List
-            </li>
+            <li className="cursor-pointer hover:text-gray-400">My Favorite</li>
           </ul>
         </div>
       )}
