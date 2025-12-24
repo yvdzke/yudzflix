@@ -1,14 +1,18 @@
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+
+// Layout
 import NavBar from "../components/Layout/NavBar";
 import Header from "../components/Fragments/Header";
 import Footer from "../components/Layout/Footer";
+
+// Components
 import CardMovies from "../components/Fragments/CardMovies";
 
 // Slick
 import Slick from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-const Slider = Slick.default;
 
 // Assets
 import ArrowRight from "../assets/img/arrow-right.png";
@@ -24,16 +28,19 @@ import {
   getMovieNowPlaying,
 } from "../services/movie.service";
 
+const Slider = Slick.default;
 const IMAGE_BASE_URL = import.meta.env.VITE_TMDB_IMAGE_URL;
 
+//
 // ================= ARROW =================
+//
 const NextArrow = ({ onClick }) => (
   <div
     onClick={onClick}
     className="absolute right-[-15px] top-1/2 -translate-y-1/2 z-10
                bg-black/70 hover:bg-white/40 p-3 rounded-full cursor-pointer"
   >
-    <img src={ArrowRight} alt="" />
+    <img src={ArrowRight} alt="next" />
   </div>
 );
 
@@ -43,11 +50,13 @@ const PrevArrow = ({ onClick }) => (
     className="absolute left-[-15px] top-1/2 -translate-y-1/2 z-10
                bg-black/70 hover:bg-white/40 p-3 rounded-full cursor-pointer"
   >
-    <img src={ArrowLeft} alt="" />
+    <img src={ArrowLeft} alt="prev" />
   </div>
 );
 
-// ================= SLIDER SETTING SECTION NORMAL =================
+//
+// ================= SLIDER SETTINGS =================
+//
 const sliderSetting = {
   dots: false,
   infinite: true,
@@ -56,36 +65,14 @@ const sliderSetting = {
   slidesToScroll: 1,
   nextArrow: <NextArrow />,
   prevArrow: <PrevArrow />,
-
   responsive: [
-    {
-      breakpoint: 1280,
-      settings: {
-        slidesToShow: 5,
-      },
-    },
-    {
-      breakpoint: 1024,
-      settings: {
-        slidesToShow: 4,
-      },
-    },
-    {
-      breakpoint: 768,
-      settings: {
-        slidesToShow: 3,
-      },
-    },
-    {
-      breakpoint: 480,
-      settings: {
-        slidesToShow: 2,
-      },
-    },
+    { breakpoint: 1280, settings: { slidesToShow: 5 } },
+    { breakpoint: 1024, settings: { slidesToShow: 4 } },
+    { breakpoint: 768, settings: { slidesToShow: 3 } },
+    { breakpoint: 480, settings: { slidesToShow: 2 } },
   ],
 };
 
-// ================= SLIDER SETTING MODAL =================
 const modalSliderSetting = {
   dots: false,
   infinite: true,
@@ -95,23 +82,14 @@ const modalSliderSetting = {
   nextArrow: <NextArrow />,
   prevArrow: <PrevArrow />,
   responsive: [
-    {
-      breakpoint: 1024,
-      settings: {
-        slidesToShow: 2,
-      },
-    },
-    {
-      breakpoint: 640,
-      settings: {
-        slidesToShow: 1,
-      },
-    },
+    { breakpoint: 1024, settings: { slidesToShow: 2 } },
+    { breakpoint: 640, settings: { slidesToShow: 1 } },
   ],
 };
 
-// ================ SECTION START =================
-// ================= SECTION PORTRAIT =================
+//
+// ================= SECTIONS =================
+//
 const Section = ({ title, movies = [], id, onClick }) => (
   <section id={id} className="flex flex-col gap-4">
     <h2 className="text-white text-xl font-semibold">{title}</h2>
@@ -119,25 +97,23 @@ const Section = ({ title, movies = [], id, onClick }) => (
     <Slider {...sliderSetting}>
       {movies.map((movie) => (
         <div key={movie.id} className="px-2">
-          <div className="cursor-pointer">
-            <CardMovies>
-              <CardMovies.CardImage
-                img={`${IMAGE_BASE_URL}${movie.poster_path}`}
-                name={movie.title}
-              />
-              <CardMovies.Overlay
-                onClick={() => onClick(movie)}
-                original_title={movie.original_title}
-              />
-            </CardMovies>
-          </div>
+          <CardMovies>
+            <CardMovies.CardImage
+              img={`${IMAGE_BASE_URL}${movie.poster_path}`}
+              name={movie.title}
+            />
+            <CardMovies.Overlay
+              movie={movie}
+              original_title={movie.original_title}
+              onClick={() => onClick(movie)}
+            />
+          </CardMovies>
         </div>
       ))}
     </Slider>
   </section>
 );
 
-// ================= SECTION LANDSCAPE =================
 const SectionLandscape = ({ title, movies, onClick }) => (
   <section className="flex flex-col gap-4">
     <h2 className="text-white text-xl font-semibold">{title}</h2>
@@ -152,7 +128,6 @@ const SectionLandscape = ({ title, movies, onClick }) => (
   </section>
 );
 
-// ================= SECTION MODAL =================
 const ModalSection = ({ title, movies, onClick }) => (
   <section className="flex flex-col gap-4 mt-6">
     <h2 className="text-white text-lg font-semibold">{title}</h2>
@@ -160,30 +135,31 @@ const ModalSection = ({ title, movies, onClick }) => (
     <Slider {...modalSliderSetting}>
       {movies.map((movie) => (
         <div key={movie.id} className="px-2">
-          <div onClick={() => onClick(movie)} className="cursor-pointer">
-            <CardMovies>
-              <CardMovies.CardImage
-                img={`${IMAGE_BASE_URL}${movie.poster_path}`}
-                name={movie.title}
-              />
-              <CardMovies.Overlay original_title={movie.original_title} />
-            </CardMovies>
-          </div>
+          <CardMovies>
+            <CardMovies.CardImage
+              img={`${IMAGE_BASE_URL}${movie.poster_path}`}
+              name={movie.title}
+            />
+            <CardMovies.Overlay
+              original_title={movie.original_title}
+              onClick={() => onClick(movie)}
+            />
+          </CardMovies>
         </div>
       ))}
     </Slider>
   </section>
 );
-// ================ SECTION END =================
 
-// ================= MODAL TRAILER =================
+//
+// ================= MODAL =================
+//
 const TrailerModal = ({ movie, trailerKey, onMovieClick, onClose }) => {
-  const [similarMovies, setMoviesSimilar] = useState([]);
+  const [similarMovies, setSimilarMovies] = useState([]);
 
   useEffect(() => {
     if (!movie?.id) return;
-
-    getMovieSimilar(movie.id).then(setMoviesSimilar);
+    getMovieSimilar(movie.id).then(setSimilarMovies);
   }, [movie]);
 
   if (!movie) return null;
@@ -194,7 +170,7 @@ const TrailerModal = ({ movie, trailerKey, onMovieClick, onClose }) => {
       onClick={onClose}
     >
       <div
-        className="w-[700px] max-w-[90%] bg-[#181A1C] rounded-xl overflow-hidden shadow-xl"
+        className="w-[700px] max-w-[90%] bg-[#181A1C] rounded-xl overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* VIDEO */}
@@ -202,7 +178,7 @@ const TrailerModal = ({ movie, trailerKey, onMovieClick, onClose }) => {
           {trailerKey ? (
             <iframe
               className="w-full h-full"
-              src={`https://www.youtube.com/embed/${trailerKey}?autoplay=1&unmute=1&controls=1`}
+              src={`https://www.youtube.com/embed/${trailerKey}?autoplay=1`}
               allow="autoplay"
               allowFullScreen
             />
@@ -218,25 +194,21 @@ const TrailerModal = ({ movie, trailerKey, onMovieClick, onClose }) => {
           <div>
             <h3 className="text-lg font-semibold">{movie.original_title}</h3>
 
-            <p className="text-sm text-white line-clamp-3">
+            <p className="text-sm line-clamp-3">
               {movie.overview || "Overview tidak tersedia."}
             </p>
 
-            <div className="text-xs text-gray-400 flex gap-2 mt-1">
-              <span className="border text-white border-white p-1 rounded-md items-center">
+            <div className="flex gap-2 mt-2 text-xs">
+              <span className="border p-1 rounded-md">
                 ⭐ {movie.vote_average}
               </span>
-              <span className="border text-white border-white p-1 rounded-md items-center">
+              <span className="border p-1 rounded-md">
                 {movie.release_date}
               </span>
             </div>
           </div>
 
-          {/* SECTION DI MODAL */}
-
-          {similarMovies.length === 0 ? (
-            <p className="text-gray-400">No similar movies found.</p>
-          ) : (
+          {similarMovies.length > 0 && (
             <ModalSection
               title="Similar Movies"
               movies={similarMovies}
@@ -249,10 +221,12 @@ const TrailerModal = ({ movie, trailerKey, onMovieClick, onClose }) => {
   );
 };
 
-// ================= LANDSCAPE CARD =================
+//
+// ================= CARD =================
+//
 const LandscapeCard = ({ movie, onClick }) => (
   <div
-    className="relative w-full aspect-video rounded-md overflow-hidden cursor-pointer"
+    className="relative aspect-video rounded-md overflow-hidden cursor-pointer"
     onClick={() => onClick(movie)}
   >
     <img
@@ -260,16 +234,16 @@ const LandscapeCard = ({ movie, onClick }) => (
       alt={movie.title}
       className="w-full h-full object-cover"
     />
-
     <div className="absolute inset-0 bg-black/30 opacity-0 hover:opacity-100 transition" />
-
-    <div className="absolute bottom-0 left-0 right-0 p-3 bg-black/60 text-white text-sm">
+    <div className="absolute bottom-0 w-full p-3 bg-black/60 text-white text-sm">
       {movie.title}
     </div>
   </div>
 );
 
+//
 // ================= PAGE =================
+//
 const MoviePage = () => {
   const [movies, setMovies] = useState([]);
   const [topRatedMovies, setTopRatedMovies] = useState([]);
@@ -278,7 +252,8 @@ const MoviePage = () => {
   const [activeMovie, setActiveMovie] = useState(null);
   const [trailerKey, setTrailerKey] = useState(null);
 
-  // useEffect to fetch movie lists on component mount
+  const favoriteMovies = useSelector((state) => state.favorite.movies);
+
   useEffect(() => {
     getMovieList().then(setMovies);
     getMovieListTopRate().then(setTopRatedMovies);
@@ -286,17 +261,9 @@ const MoviePage = () => {
     getMovieNowPlaying().then(setNowPlayingMovies);
   }, []);
 
-  // Handle movie click to open modal and fetch trailer
   const handleClickMovie = async (movie) => {
     setActiveMovie(movie);
-    const key = await getMovieTrailer(movie.id);
-    setTrailerKey(key);
-  };
-
-  // Handle close modal
-  const handleCloseModal = () => {
-    setActiveMovie(null);
-    setTrailerKey(null);
+    setTrailerKey(await getMovieTrailer(movie.id));
   };
 
   return (
@@ -304,42 +271,45 @@ const MoviePage = () => {
       <NavBar />
       <Header />
 
-      <div className="max-w-[1300px] mx-auto px-6 flex flex-col gap-14 py-10">
+      <div className="max-w-[1300px] mx-auto px-6 py-10 flex flex-col gap-14">
         <SectionLandscape
           title="Recent Movies"
           movies={nowPlayingMovies}
           onClick={handleClickMovie}
         />
-        {/* SECTION MOVIES */}
+
         <Section title="Movies" movies={movies} onClick={handleClickMovie} />
-        {/* SECTION TOP RATED */}
         <Section
           id="toprated"
           title="Top Rated"
           movies={topRatedMovies}
           onClick={handleClickMovie}
         />
-        {/* SECTION UPCOMING */}
         <Section
           title="Upcoming"
           movies={upcomingMovies}
           onClick={handleClickMovie}
         />
-        <Section title="My Favorite" />
+
+        {favoriteMovies.length > 0 && (
+          <Section
+            title="My Favorite"
+            movies={favoriteMovies}
+            onClick={handleClickMovie}
+          />
+        )}
       </div>
 
       <Footer />
 
-      {/* MODAL */}
       <TrailerModal
         movie={activeMovie}
         trailerKey={trailerKey}
-        onClose={handleCloseModal}
+        onClose={() => setActiveMovie(null)}
         onMovieClick={handleClickMovie}
-        movies={movies}
       />
     </div>
   );
 };
-// yvdzke
+
 export default MoviePage;

@@ -1,17 +1,19 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { Provider } from "react-redux";
+
+import "./index.css";
+import { store } from "./store";
 
 // Pages
-import MoviePage from "./pages/movie.jsx";
-import LoginPage from "./pages/login";
-import RegisterPage from "./pages/register";
-import ErrorPage from "./pages/404.jsx";
 import Home from "./pages/home.jsx";
-import ProtectedRoute from "./pages/protectrouter.jsx";
+import LoginPage from "./pages/login.jsx";
+import RegisterPage from "./pages/register.jsx";
+import MoviePage from "./pages/movie.jsx";
 import ProfilePage from "./pages/profile.jsx";
-import { Navigate } from "react-router-dom";
+import ErrorPage from "./pages/404.jsx";
+import ProtectedRoute from "./pages/protectrouter.jsx";
 
 const router = createBrowserRouter([
   {
@@ -23,7 +25,6 @@ const router = createBrowserRouter([
     path: "/login",
     element: <LoginPage />,
   },
-
   {
     path: "/register",
     element: <RegisterPage />,
@@ -44,6 +45,8 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <Provider store={store}>
+      <RouterProvider router={router} />
+    </Provider>
   </StrictMode>
 );

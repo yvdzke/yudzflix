@@ -1,6 +1,7 @@
 import Button from "../Elements/Button/Button";
 import { IoAdd } from "react-icons/io5";
-import { IoMdPlay } from "react-icons/io";
+import { useDispatch, useSelector } from "react-redux";
+import { addFavorite, removeFavorite } from "../../store/favoriteSlice.js";
 
 const CardMovies = ({ children, variant = "portrait" }) => {
   return (
@@ -37,24 +38,42 @@ const CardImage = ({ img, name, variant = "portrait" }) => {
   );
 };
 
-const Overlay = (props) => {
-  const { original_title, quality, onClick } = props;
+const Overlay = ({ movie, original_title, onClick }) => {
+  const dispatch = useDispatch();
+  const favorites = useSelector((state) => state.favorite.movies);
+
+  const isFavorite = favorites.some((fav) => fav.id === movie.id);
+
+  const handleFavorite = () => {
+    if (isFavorite) {
+      dispatch(removeFavorite(movie.id));
+    } else {
+      dispatch(addFavorite(movie));
+    }
+  };
+
   return (
     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex items-end p-4">
-      <div className="flex flex-col gap-2 justify-between w-full text-white text-sm">
+      <div className="flex flex-col gap-2 w-full text-white text-sm">
         <span className="font-bold">{original_title}</span>
-        <div className="flex gap-2 flex-row">
+
+        <div className="flex gap-2">
           <Button
             onClick={onClick}
-            varian="bg-white p-2 text-black font-bold rounded-md hover:text-blue-500  "
+            varian="bg-white p-2 text-black font-bold rounded-md hover:text-blue-500"
           >
             Trailer
           </Button>
-          <Button varian="bg-[#181A1C] hover:bg-gray-700 rounded-full">
+
+          <Button
+            onClick={handleFavorite}
+            varian={`rounded-full ${
+              isFavorite ? "bg-red-500" : "bg-[#181A1C]"
+            }`}
+          >
             <IoAdd color="white" size={40} />
           </Button>
         </div>
-        <span>{quality}</span>
       </div>
     </div>
   );
