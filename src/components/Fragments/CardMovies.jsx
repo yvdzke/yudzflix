@@ -8,7 +8,7 @@ import { playMovie } from "../../store/playerSlice";
 const CardMovies = ({ children, variant = "portrait" }) => {
   return (
     <div
-      className={`relative group overflow-hidden rounded-md
+      className={`relative group overflow-hidden rounded-md cursor-pointer
         ${
           variant === "landscape"
             ? "w-[300px] h-[150px]"
