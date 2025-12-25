@@ -8,10 +8,10 @@ import { playMovie } from "../../store/playerSlice";
 const CardMovies = ({ children, variant = "portrait" }) => {
   return (
     <div
-      className={`relative group overflow-hidden rounded-xl
+      className={`relative group overflow-hidden rounded-md
         ${
           variant === "landscape"
-            ? "w-[360px] h-[200px]"
+            ? "w-[300px] h-[150px]"
             : "w-[200px] h-[280px]"
         }`}
     >
@@ -24,7 +24,7 @@ const CardImage = ({ img, name, variant = "portrait" }) => (
   <img
     src={img}
     alt={name}
-    className={`object-cover rounded-xl transition-transform duration-300
+    className={`object-cover rounded-md transition-transform duration-300
       group-hover:scale-110
       ${
         variant === "landscape" ? "w-[360px] h-[200px]" : "w-[200px] h-[280px]"

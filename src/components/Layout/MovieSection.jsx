@@ -33,13 +33,13 @@ const PrevArrow = ({ onClick }) => (
 );
 
 //
-// ================= SLIDER =================
+// ================= SLIDER SETTING =================
 //
-const sliderSetting = {
+const getSliderSetting = (variant) => ({
   dots: false,
   infinite: false,
   speed: 500,
-  slidesToShow: 6,
+  slidesToShow: variant === "landscape" ? 4 : 6,
   slidesToScroll: 1,
   nextArrow: <NextArrow />,
   prevArrow: <PrevArrow />,
@@ -47,19 +47,19 @@ const sliderSetting = {
     {
       breakpoint: 1280,
       settings: {
-        slidesToShow: 5,
+        slidesToShow: variant === "landscape" ? 4 : 5,
       },
     },
     {
       breakpoint: 1024,
       settings: {
-        slidesToShow: 4,
+        slidesToShow: variant === "landscape" ? 2 : 4,
       },
     },
     {
       breakpoint: 768,
       settings: {
-        slidesToShow: 3,
+        slidesToShow: variant === "landscape" ? 2 : 3,
       },
     },
     {
@@ -69,7 +69,7 @@ const sliderSetting = {
       },
     },
   ],
-};
+});
 
 //
 // ================= SECTION =================
@@ -81,7 +81,7 @@ const MovieSection = ({ title, movies, variant = "portrait" }) => {
     <section className="flex flex-col gap-4">
       <h2 className="text-white text-xl font-semibold">{title}</h2>
 
-      <Slider {...sliderSetting}>
+      <Slider {...getSliderSetting(variant)}>
         {movies.map((movie) => (
           <div key={movie.id} className="px-2">
             <CardMovies variant={variant}>
