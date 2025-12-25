@@ -2,56 +2,45 @@ import Button from "../Elements/Button/Button";
 import { IoAdd, IoCheckmark } from "react-icons/io5";
 import { IoMdPlay } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
-import { addFavorite, removeFavorite } from "../../store/favoriteSlice.js";
+import { addFavorite, removeFavorite } from "../../store/favoriteSlice";
+import { playMovie } from "../../store/playerSlice";
 
 const CardMovies = ({ children, variant = "portrait" }) => {
   return (
     <div
-      className={`
-        relative group overflow-hidden rounded-xl
+      className={`relative group overflow-hidden rounded-xl
         ${
           variant === "landscape"
             ? "w-[360px] h-[200px]"
             : "w-[200px] h-[280px]"
-        }
-      `}
+        }`}
     >
       {children}
     </div>
   );
 };
 
-const CardImage = ({ img, name, variant = "portrait" }) => {
-  return (
-    <img
-      src={img}
-      alt={name}
-      className={`
-        object-cover rounded-xl transition-transform duration-300
-        group-hover:scale-110
-        ${
-          variant === "landscape"
-            ? "w-[360px] h-[200px]"
-            : "w-[200px] h-[280px]"
-        }
-      `}
-    />
-  );
-};
+const CardImage = ({ img, name, variant = "portrait" }) => (
+  <img
+    src={img}
+    alt={name}
+    className={`object-cover rounded-xl transition-transform duration-300
+      group-hover:scale-110
+      ${
+        variant === "landscape" ? "w-[360px] h-[200px]" : "w-[200px] h-[280px]"
+      }`}
+  />
+);
 
-const Overlay = ({ movie, original_title, onClick }) => {
+const Overlay = ({ movie, original_title }) => {
   const dispatch = useDispatch();
   const favorites = useSelector((state) => state.favorite.movies || []);
 
-  // ✅ GUARD WAJIB (INI KUNCI UTAMA)
-  const isFavorite =
-    movie && Array.isArray(favorites)
-      ? favorites.some((fav) => fav?.id === movie.id)
-      : false;
+  if (!movie) return null;
+
+  const isFavorite = favorites.some((fav) => fav?.id === movie.id);
 
   const handleFavorite = () => {
-    if (!movie) return;
-
     if (isFavorite) {
       dispatch(removeFavorite(movie.id));
     } else {
@@ -65,27 +54,25 @@ const Overlay = ({ movie, original_title, onClick }) => {
         <span className="font-bold">{original_title}</span>
 
         <div className="flex gap-2">
-          {/* PLAY BUTTON */}
+          {/* PLAY */}
           <Button
-            onClick={() => movie && onClick?.(movie)}
-            varian="bg-white flex items-center justify-center p-2 rounded-full hover:bg-gray-300"
+            onClick={() => dispatch(playMovie(movie))}
+            varian="bg-white flex items-center justify-center p-2 rounded-full"
           >
             <IoMdPlay color="black" size={20} />
           </Button>
 
-          {/* FAVORITE BUTTON */}
-          {movie && (
-            <Button
-              onClick={handleFavorite}
-              varian="rounded-full bg-[#181A1C] hover:bg-gray-600"
-            >
-              {isFavorite ? (
-                <IoCheckmark color="white" size={36} />
-              ) : (
-                <IoAdd color="white" size={36} />
-              )}
-            </Button>
-          )}
+          {/* FAVORITE */}
+          <Button
+            onClick={handleFavorite}
+            varian="rounded-full bg-[#181A1C] hover:bg-gray-600"
+          >
+            {isFavorite ? (
+              <IoCheckmark color="white" size={32} />
+            ) : (
+              <IoAdd color="white" size={32} />
+            )}
+          </Button>
         </div>
       </div>
     </div>
