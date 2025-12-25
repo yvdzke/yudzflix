@@ -21,15 +21,20 @@ const CardMovies = ({ children, variant = "portrait" }) => {
 };
 
 const CardImage = ({ img, name, variant = "portrait" }) => (
-  <img
-    src={img}
-    alt={name}
-    className={`object-cover rounded-md transition-transform duration-300
+  <>
+    {/* <div className="absolute right-1 h-[48px] w-[31px] bg-red-600 rounded-tr-lg rounded-bl-lg">
+      <p className="text-white ml-1">Top</p>
+    </div> */}
+    <img
+      src={img}
+      alt={name}
+      className={`object-cover rounded-md transition-transform duration-300
       group-hover:scale-110
       ${
         variant === "landscape" ? "w-[360px] h-[200px]" : "w-[200px] h-[280px]"
       }`}
-  />
+    />
+  </>
 );
 
 const Overlay = ({ movie, original_title }) => {
