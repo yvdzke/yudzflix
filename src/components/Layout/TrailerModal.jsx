@@ -20,7 +20,6 @@ import { getMovieTrailer, getMovieSimilar } from "../../services/movie.service";
 import { setTrailerKey, closePlayer } from "../../store/playerSlice";
 
 const Slider = Slick.default;
-const IMAGE_BASE_URL = import.meta.env.VITE_TMDB_IMAGE_URL;
 
 //
 // ================= ARROW =================
@@ -65,6 +64,13 @@ const TrailerModal = () => {
     (state) => state.player
   );
 
+  // Substring
+  const [showFull, setShowFull] = useState(false);
+  const truncateText = (text, max = 100) => {
+    if (!text) return "";
+    return text.length > max ? text.slice(0, max) + "..." : text;
+  };
+
   const [similarMovies, setSimilarMovies] = useState([]);
 
   useEffect(() => {
@@ -85,6 +91,7 @@ const TrailerModal = () => {
         className="w-[700px] bg-[#181A1C] rounded-xl overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
+        {/* ===== TRAILER ===== */}
         <div className="aspect-video bg-black">
           {trailerKey ? (
             <iframe
@@ -101,25 +108,56 @@ const TrailerModal = () => {
           )}
         </div>
 
-        <div className="p-4 text-white">
-          <h3 className="text-lg font-semibold mb-3">Similar Movies</h3>
+        {/* ===== CONTENT ===== */}
+        <div className="p-5 text-white flex flex-col gap-6">
+          {/* ===== TITLE & OVERVIEW ===== */}
+          <div className="flex flex-col gap-2">
+            <h2 className="text-2xl font-bold">{activeMovie.title}</h2>
 
-          <Slider {...sliderSetting}>
-            {similarMovies.map((movie) => (
-              <div key={movie.id} className="px-2">
-                <CardMovies>
-                  <CardMovies.CardImage
-                    img={`${IMAGE_BASE_URL}${movie.poster_path}`}
-                    name={movie.title}
-                  />
-                  <CardMovies.Overlay
-                    movie={movie}
-                    original_title={movie.original_title}
-                  />
-                </CardMovies>
-              </div>
-            ))}
-          </Slider>
+            <div className="flex gap-3 text-sm text-gray-400">
+              <span>{activeMovie.release_date?.slice(0, 4)}</span>
+              <span>⭐ {activeMovie.vote_average?.toFixed(1)}</span>
+            </div>
+
+            <p className="text-sm text-gray-300 leading-relaxed">
+              {showFull
+                ? activeMovie.overview
+                : truncateText(activeMovie.overview, 100)}
+            </p>
+
+            {activeMovie.overview?.length > 100 && (
+              <button
+                onClick={() => setShowFull(!showFull)}
+                className="text-sm text-white hover:underline mt-[-13px] self-start"
+              >
+                {showFull ? "Read less" : "Read more"}
+              </button>
+            )}
+          </div>
+
+          {/* ===== SIMILAR MOVIES ===== */}
+          {similarMovies.length > 0 && (
+            <div>
+              <h3 className="text-lg font-semibold mb-3">Similar Movies</h3>
+
+              <Slider {...sliderSetting}>
+                {similarMovies.map((movie) => (
+                  <div key={movie.id} className="px-2">
+                    <CardMovies>
+                      <CardMovies.CardImage
+                        img={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                        name={movie.title}
+                      />
+                      <CardMovies.Overlay
+                        movie={movie}
+                        original_title={movie.original_title}
+                      />
+                    </CardMovies>
+                  </div>
+                ))}
+              </Slider>
+            </div>
+          )}
         </div>
       </div>
     </div>
