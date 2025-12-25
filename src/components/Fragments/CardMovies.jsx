@@ -1,5 +1,6 @@
 import Button from "../Elements/Button/Button";
-import { IoAdd } from "react-icons/io5";
+import { IoAdd, IoCheckmark } from "react-icons/io5";
+import { IoMdPlay } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 import { addFavorite, removeFavorite } from "../../store/favoriteSlice.js";
 
@@ -40,11 +41,17 @@ const CardImage = ({ img, name, variant = "portrait" }) => {
 
 const Overlay = ({ movie, original_title, onClick }) => {
   const dispatch = useDispatch();
-  const favorites = useSelector((state) => state.favorite.movies);
+  const favorites = useSelector((state) => state.favorite.movies || []);
 
-  const isFavorite = favorites.some((fav) => fav.id === movie.id);
+  // ✅ GUARD WAJIB (INI KUNCI UTAMA)
+  const isFavorite =
+    movie && Array.isArray(favorites)
+      ? favorites.some((fav) => fav?.id === movie.id)
+      : false;
 
   const handleFavorite = () => {
+    if (!movie) return;
+
     if (isFavorite) {
       dispatch(removeFavorite(movie.id));
     } else {
@@ -58,21 +65,27 @@ const Overlay = ({ movie, original_title, onClick }) => {
         <span className="font-bold">{original_title}</span>
 
         <div className="flex gap-2">
+          {/* PLAY BUTTON */}
           <Button
-            onClick={onClick}
-            varian="bg-white p-2 text-black font-bold rounded-md hover:text-blue-500"
+            onClick={() => movie && onClick?.(movie)}
+            varian="bg-white flex items-center justify-center p-2 rounded-full hover:bg-gray-300"
           >
-            Trailer
+            <IoMdPlay color="black" size={20} />
           </Button>
 
-          <Button
-            onClick={handleFavorite}
-            varian={`rounded-full ${
-              isFavorite ? "bg-red-500" : "bg-[#181A1C]"
-            }`}
-          >
-            <IoAdd color="white" size={40} />
-          </Button>
+          {/* FAVORITE BUTTON */}
+          {movie && (
+            <Button
+              onClick={handleFavorite}
+              varian="rounded-full bg-[#181A1C] hover:bg-gray-600"
+            >
+              {isFavorite ? (
+                <IoCheckmark color="white" size={36} />
+              ) : (
+                <IoAdd color="white" size={36} />
+              )}
+            </Button>
+          )}
         </div>
       </div>
     </div>

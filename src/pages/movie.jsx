@@ -59,7 +59,7 @@ const PrevArrow = ({ onClick }) => (
 //
 const sliderSetting = {
   dots: false,
-  infinite: true,
+  infinite: false,
   speed: 500,
   slidesToShow: 6,
   slidesToScroll: 1,
@@ -75,7 +75,7 @@ const sliderSetting = {
 
 const modalSliderSetting = {
   dots: false,
-  infinite: true,
+  infinite: false,
   speed: 500,
   slidesToShow: 3,
   slidesToScroll: 1,
@@ -311,5 +311,5 @@ const MoviePage = () => {
     </div>
   );
 };
-
+//yvdzke
 export default MoviePage;
