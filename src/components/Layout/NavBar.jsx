@@ -1,29 +1,64 @@
 import { useState, useEffect } from "react";
 import { MdMovie } from "react-icons/md";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { deleteUser } from "../../services/auth.service";
+import { useDispatch, useSelector } from "react-redux";
+import { getUser, deleteUser } from "../../store/authSlice";
 
 const NavBar = () => {
-  const location = useLocation();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const { users, loading } = useSelector((state) => state.auth);
 
   const [openProfile, setOpenProfile] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  // Delete User Logic
-  const handleDeleteUser = () => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      const userId = JSON.parse(storedUser).id;
-      console.log("USER ID:", userId);
-      deleteUser(userId).then(() => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        navigate("/");
-      });
-    }
+  /* =========================
+     GET USER (REDUX)
+  ========================= */
+  useEffect(() => {
+    dispatch(getUser());
+  }, [dispatch]);
+
+  /* =========================
+     SCROLL EFFECT
+  ========================= */
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  /* =========================
+     AUTH LOGIC
+  ========================= */
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/");
   };
 
+  const handleDeleteUser = () => {
+    const storedUser = localStorage.getItem("user");
+
+    if (!storedUser) return;
+
+    const userId = JSON.parse(storedUser).id;
+
+    dispatch(deleteUser(userId)).then(() => {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      navigate("/");
+    });
+  };
+
+  /* =========================
+     UI LOGIC
+  ========================= */
   const hideAuthLinks =
     location.pathname === "/login" ||
     location.pathname === "/register" ||
@@ -34,24 +69,12 @@ const NavBar = () => {
     location.pathname === "/register" ||
     location.pathname === "/";
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    navigate("/");
-  };
-
   const storedUser = localStorage.getItem("user");
   const profileUser = storedUser ? JSON.parse(storedUser).username : "User";
 
+  /* =========================
+     RENDER
+  ========================= */
   return (
     <nav
       className={`fixed z-50 flex items-center justify-between top-0 left-0 right-0 px-4 py-4 transition-all duration-300
@@ -79,8 +102,8 @@ const NavBar = () => {
         </div>
       )}
 
-      {/* AUTH */}
-      {!hideAuthLinks && (
+      {/* AUTH BUTTON */}
+      {!hideAuthLinks && !storedUser && (
         <div className="flex items-center gap-4 mr-4">
           <Link
             to="/login"
@@ -97,8 +120,8 @@ const NavBar = () => {
         </div>
       )}
 
-      {/* PROFILE DROPDOWN */}
-      {!hideBeranda && (
+      {/* PROFILE */}
+      {!hideBeranda && storedUser && (
         <div className="relative mr-4">
           {/* Trigger */}
           <div
@@ -132,9 +155,10 @@ const NavBar = () => {
               >
                 Logout
               </button>
+
               <button
                 onClick={handleDeleteUser}
-                className="block w-full text-left px-4 py-3 text-red-400 hover:bg-gray-800"
+                className="block w-full text-left px-4 py-3 text-red-500 hover:bg-gray-800"
               >
                 Delete User
               </button>

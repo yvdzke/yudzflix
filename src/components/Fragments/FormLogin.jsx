@@ -2,67 +2,67 @@ import InputForm from "../Elements/Input/index.jsx";
 import Button from "../Elements/Button/Button.jsx";
 import { useNavigate } from "react-router-dom";
 import { useState, useRef } from "react";
-import { getUser } from "../../services/auth.service.js";
+import { useDispatch, useSelector } from "react-redux";
+import { loginAuth } from "../../store/authSlice";
 
 const FormLogin = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const { loading, error } = useSelector((state) => state.auth);
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [loginFailed, setLoginFailed] = useState("");
+  const [enterDetail, setEnterDetails] = useState("");
+
+  const usernameRef = useRef(null);
 
   const handleLogin = (e) => {
     e.preventDefault();
 
     if (!username || !password) {
-      alert("Please Enter Your Details");
+      setEnterDetails("Please enter your details");
       return;
     }
 
-    getUser((users) => {
-      const user = users.find(
-        (u) => u.username === username && u.password === password
-      );
-
-      if (!user) {
-        setLoginFailed("Invalid username or password");
-        return;
+    dispatch(loginAuth({ username, password })).then((res) => {
+      if (!res.error) {
+        navigate("/movie");
       }
-
-      localStorage.setItem("user", JSON.stringify(user));
-      localStorage.setItem("isLogin", "true");
-
-      navigate("/movie");
     });
   };
 
-  const emailRef = useRef(null);
-
   return (
-    <form onSubmit={handleLogin}>
-      <p className="text-red-600">{loginFailed}</p>
+    <form onSubmit={handleLogin} className="space-y-4">
+      {(enterDetail || error) && (
+        <p className="text-red-600">{enterDetail || error}</p>
+      )}
+
       <InputForm
+        ref={usernameRef}
         name="username"
         label="Username"
-        onChange={(e) => setUsername(e.target.value)}
-        type="username"
+        type="text"
         value={username}
-        placeholder="Enter Your Username"
-        ref={emailRef}
+        placeholder="Enter your username"
+        onChange={(e) => setUsername(e.target.value)}
       />
+
       <InputForm
         name="password"
         label="Password"
-        onChange={(e) => setPassword(e.target.value)}
-        onClick={handleLogin}
-        value={password}
         type="password"
+        value={password}
         placeholder="****"
+        onChange={(e) => setPassword(e.target.value)}
       />
+
       <Button
         type="submit"
+        disabled={loading}
         varian="w-full py-3 bg-[#3D4142] rounded-full hover:bg-gray-700 transition-colors font-medium"
       >
-        Login
+        {loading ? "Logging in..." : "Login"}
       </Button>
     </form>
   );
