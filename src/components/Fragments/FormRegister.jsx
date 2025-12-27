@@ -2,10 +2,17 @@ import InputForm from "../Elements/Input/index.jsx";
 import Button from "../Elements/Button/Button.jsx";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { registerAuth } from "../../services/auth.service.js";
+import { useDispatch, useSelector } from "react-redux";
+
+// Redux
+import { registerAuth } from "../../store/authSlice";
 
 const FormRegister = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const { loading, error } = useSelector((state) => state.auth);
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -17,23 +24,20 @@ const FormRegister = () => {
       return;
     }
 
-    const userData = {
-      username,
-      password,
-    };
+    const userData = { username, password };
 
-    registerAuth(userData)
+    dispatch(registerAuth(userData))
+      .unwrap()
       .then(() => {
         navigate("/login");
       })
       .catch((err) => {
-        console.error(err);
-        alert("Register Failed. Please try again.");
+        alert(err || "Register Failed. Please try again.");
       });
   };
 
   return (
-    <form onSubmit={handleRegister}>
+    <form onSubmit={handleRegister} className="flex flex-col gap-4">
       <InputForm
         name="username"
         label="Create Username"
@@ -54,10 +58,17 @@ const FormRegister = () => {
 
       <Button
         type="submit"
-        varian="w-full py-3 bg-[#3D4142] rounded-full hover:bg-gray-700 transition-colors font-medium"
+        disabled={loading}
+        varian={`w-full py-3 rounded-full font-medium transition-colors ${
+          loading
+            ? "bg-gray-500 cursor-not-allowed"
+            : "bg-[#3D4142] hover:bg-gray-700"
+        }`}
       >
-        Register
+        {loading ? "Registering..." : "Register"}
       </Button>
+
+      {error && <p className="text-red-500 text-sm text-center">{error}</p>}
     </form>
   );
 };

@@ -13,17 +13,13 @@ import ArrowLeft from "../../assets/img/arrow-left.png";
 // Components
 import CardMovies from "../Fragments/CardMovies";
 
-// Services
-import { getMovieTrailer, getMovieSimilar } from "../../services/movie.service";
-
 // Redux
-import { setTrailerKey, closePlayer } from "../../store/playerSlice";
+import { fetchMovieTrailer, fetchSimilarMovies } from "../../store/movieSlice";
+import { closePlayer } from "../../store/playerSlice";
 
 const Slider = Slick.default;
 
-//
-// ================= ARROW =================
-//
+// Arrow
 const NextArrow = ({ onClick }) => (
   <div
     onClick={onClick}
@@ -42,9 +38,7 @@ const PrevArrow = ({ onClick }) => (
   </div>
 );
 
-//
-// ================= SLIDER =================
-//
+// Slider
 const sliderSetting = {
   dots: false,
   infinite: false,
@@ -55,29 +49,30 @@ const sliderSetting = {
   prevArrow: <PrevArrow />,
 };
 
-//
-// ================= MODAL =================
-//
+// Modal
 const TrailerModal = () => {
   const dispatch = useDispatch();
-  const { activeMovie, trailerKey, isOpen } = useSelector(
-    (state) => state.player
-  );
 
-  // Substring
+  // Player state
+  const { activeMovie, isOpen } = useSelector((state) => state.player);
+
+  // Movie state
+  const { trailer, similar } = useSelector((state) => state.movie);
+
+  // UI state
   const [showFull, setShowFull] = useState(false);
+
   const truncateText = (text, max = 100) => {
     if (!text) return "";
     return text.length > max ? text.slice(0, max) + "..." : text;
   };
 
-  const [similarMovies, setSimilarMovies] = useState([]);
-
+  // Fetch trailer & similar when modal opens
   useEffect(() => {
     if (!activeMovie?.id) return;
 
-    getMovieTrailer(activeMovie.id).then((key) => dispatch(setTrailerKey(key)));
-    getMovieSimilar(activeMovie.id).then(setSimilarMovies);
+    dispatch(fetchMovieTrailer(activeMovie.id));
+    dispatch(fetchSimilarMovies(activeMovie.id));
   }, [activeMovie, dispatch]);
 
   if (!isOpen || !activeMovie) return null;
@@ -93,11 +88,11 @@ const TrailerModal = () => {
       >
         {/* ===== TRAILER ===== */}
         <div className="aspect-video bg-black">
-          {trailerKey ? (
+          {trailer ? (
             <iframe
-              key={trailerKey}
+              key={trailer}
               className="w-full h-full"
-              src={`https://www.youtube.com/embed/${trailerKey}?autoplay=1`}
+              src={`https://www.youtube.com/embed/${trailer}?autoplay=1`}
               allow="autoplay"
               allowFullScreen
             />
@@ -110,15 +105,17 @@ const TrailerModal = () => {
 
         {/* ===== CONTENT ===== */}
         <div className="p-5 text-white flex flex-col gap-6">
-          {/* ===== TITLE & OVERVIEW ===== */}
-          <div className="flex flex-col gap-2">
+          {/* TITLE */}
+          <div>
             <h2 className="text-2xl font-bold">{activeMovie.title}</h2>
-
-            <div className="flex gap-3 text-sm text-gray-400">
+            <div className="flex gap-3 text-sm text-gray-400 mt-1">
               <span>{activeMovie.release_date?.slice(0, 4)}</span>
               <span>⭐ {activeMovie.vote_average?.toFixed(1)}</span>
             </div>
+          </div>
 
+          {/* OVERVIEW */}
+          <div>
             <p className="text-sm text-gray-300 leading-relaxed">
               {showFull
                 ? activeMovie.overview
@@ -128,30 +125,27 @@ const TrailerModal = () => {
             {activeMovie.overview?.length > 100 && (
               <button
                 onClick={() => setShowFull(!showFull)}
-                className="text-sm text-white hover:underline mt-[-13px] self-start"
+                className="text-sm text-white hover:underline mt-2"
               >
                 {showFull ? "Read less" : "Read more"}
               </button>
             )}
           </div>
 
-          {/* ===== SIMILAR MOVIES ===== */}
-          {similarMovies.length > 0 && (
+          {/* SIMILAR MOVIES */}
+          {similar.length > 0 && (
             <div>
               <h3 className="text-lg font-semibold mb-3">Similar Movies</h3>
 
               <Slider {...sliderSetting}>
-                {similarMovies.map((movie) => (
+                {similar.map((movie) => (
                   <div key={movie.id} className="px-2">
                     <CardMovies>
                       <CardMovies.CardImage
                         img={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
                         name={movie.title}
                       />
-                      <CardMovies.Overlay
-                        movie={movie}
-                        original_title={movie.original_title}
-                      />
+                      <CardMovies.Overlay movie={movie} />
                     </CardMovies>
                   </div>
                 ))}

@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 // Layout
 import NavBar from "../components/Layout/NavBar";
@@ -10,28 +10,33 @@ import Footer from "../components/Layout/Footer";
 import TrailerModal from "../components/Layout/TrailerModal";
 import MovieSection from "../components/Layout/MovieSection";
 
-// Services
+// Redux
 import {
-  getMovieList,
-  getMovieListTopRate,
-  getMovieListUpcoming,
-  getMovieNowPlaying,
-} from "../services/movie.service";
+  fetchPopularMovies,
+  fetchTopRatedMovies,
+  fetchUpcomingMovies,
+  fetchNowPlayingMovies,
+} from "../store/movieSlice";
 
 const MoviePage = () => {
-  const [movies, setMovies] = useState([]);
-  const [topRated, setTopRated] = useState([]);
-  const [upcoming, setUpcoming] = useState([]);
-  const [nowPlaying, setNowPlaying] = useState([]);
+  const dispatch = useDispatch();
+
+  const { popular, topRated, upcoming, nowPlaying, loading } = useSelector(
+    (state) => state.movie
+  );
 
   const favorites = useSelector((state) => state.favorite.movies);
 
   useEffect(() => {
-    getMovieList().then(setMovies);
-    getMovieListTopRate().then(setTopRated);
-    getMovieListUpcoming().then(setUpcoming);
-    getMovieNowPlaying().then(setNowPlaying);
-  }, []);
+    dispatch(fetchPopularMovies());
+    dispatch(fetchTopRatedMovies());
+    dispatch(fetchUpcomingMovies());
+    dispatch(fetchNowPlayingMovies());
+  }, [dispatch]);
+
+  if (loading) {
+    return <p className="text-white text-center mt-20">Loading...</p>;
+  }
 
   return (
     <div className="bg-[#181A1C] min-h-screen">
@@ -45,7 +50,7 @@ const MoviePage = () => {
           variant="landscape"
         />
 
-        <MovieSection title="Movies" movies={movies} />
+        <MovieSection title="Movies" movies={popular} />
         <MovieSection title="Top Rated" movies={topRated} />
         <MovieSection title="Upcoming" movies={upcoming} />
 
