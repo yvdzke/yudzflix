@@ -1,3 +1,4 @@
+// Non Redux nyimpen aja disini
 import axios from "axios";
 
 const AUTH_URL = "https://69424ac3686bc3ca81692912.mockapi.io/yvdzke/users";

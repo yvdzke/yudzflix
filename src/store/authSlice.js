@@ -3,9 +3,7 @@ import axios from "axios";
 
 const AUTH_URL = "https://69424ac3686bc3ca81692912.mockapi.io/yvdzke/users";
 
-/* =====================
-   REGISTER
-===================== */
+// register
 export const registerAuth = createAsyncThunk(
   "auth/register",
   async (data, thunkAPI) => {
@@ -13,12 +11,12 @@ export const registerAuth = createAsyncThunk(
       const res = await axios.post(AUTH_URL, data);
       return res.data;
     } catch (err) {
-      return thunkAPI.rejectWithValue("Register gagal", err);
+      return thunkAPI.rejectWithValue("Successfully Failed Register :3", err);
     }
   }
 );
 
-// Login User
+// loginUser
 export const loginAuth = createAsyncThunk(
   "auth/login",
   async ({ username, password }, thunkAPI) => {
@@ -33,12 +31,12 @@ export const loginAuth = createAsyncThunk(
         return thunkAPI.rejectWithValue("Wrong username or password");
       }
 
-      // Fake Token
+      // fakeToken
       const token = btoa(`${user.id}:${Date.now()}`);
 
       return { user, token };
     } catch (err) {
-      return thunkAPI.rejectWithValue("Login gagal", err);
+      return thunkAPI.rejectWithValue("Successfully Failed Login", err);
     }
   }
 );
@@ -49,12 +47,11 @@ export const getUser = createAsyncThunk("auth/getUser", async (_, thunkAPI) => {
     const res = await axios.get(AUTH_URL);
     return res.data;
   } catch (err) {
-    return thunkAPI.rejectWithValue("Gagal mengambil user", err);
+    return thunkAPI.rejectWithValue("Succesfully Failled getUsers", err);
   }
 });
 
 // deleteUser
-
 export const deleteUser = createAsyncThunk(
   "auth/deleteUser",
   async (id, thunkAPI) => {
@@ -62,7 +59,7 @@ export const deleteUser = createAsyncThunk(
       await axios.delete(`${AUTH_URL}/${id}`);
       return id;
     } catch (err) {
-      return thunkAPI.rejectWithValue("Gagal hapus user", err);
+      return thunkAPI.rejectWithValue("Succesfully Failed", err);
     }
   }
 );
@@ -102,12 +99,12 @@ const authSlice = createSlice({
         state.error = action.payload;
       })
 
-      // case Register
+      // case register
       .addCase(registerAuth.fulfilled, (state, action) => {
         state.users.push(action.payload);
       })
 
-      // case Login
+      // case login
       .addCase(loginAuth.pending, (state) => {
         state.loading = true;
         state.error = null;
