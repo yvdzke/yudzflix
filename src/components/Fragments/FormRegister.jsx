@@ -15,12 +15,13 @@ const FormRegister = () => {
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [enterDetail, setEnterDetails] = useState("");
 
   const handleRegister = (e) => {
     e.preventDefault();
 
     if (!username || !password) {
-      alert("Please Enter Username or Password");
+      setEnterDetails("Please enter your details");
       return;
     }
 
@@ -37,39 +38,42 @@ const FormRegister = () => {
   };
 
   return (
-    <form onSubmit={handleRegister} className="flex flex-col gap-4">
-      <InputForm
-        name="username"
-        label="Create Username"
-        type="text"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        placeholder="Create Username"
-      />
+    <>
+      <p className="text-red-600">{enterDetail}</p>
+      <form onSubmit={handleRegister} className="flex flex-col gap-4">
+        <InputForm
+          name="username"
+          label="Create Username"
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          placeholder="Create Username"
+        />
 
-      <InputForm
-        name="password"
-        label="Create Password"
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="****"
-      />
+        <InputForm
+          name="password"
+          label="Create Password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="****"
+        />
 
-      <Button
-        type="submit"
-        disabled={loading}
-        varian={`w-full py-3 rounded-full font-medium transition-colors ${
-          loading
-            ? "bg-gray-500 cursor-not-allowed"
-            : "bg-[#3D4142] hover:bg-gray-700"
-        }`}
-      >
-        {loading ? "Registering..." : "Register"}
-      </Button>
+        <Button
+          type="submit"
+          disabled={loading}
+          varian={`w-full py-3 rounded-full font-medium transition-colors ${
+            loading
+              ? "bg-gray-500 cursor-not-allowed"
+              : "bg-[#3D4142] hover:bg-gray-700"
+          }`}
+        >
+          {loading ? "Registering..." : "Register"}
+        </Button>
 
-      {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-    </form>
+        {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+      </form>
+    </>
   );
 };
 

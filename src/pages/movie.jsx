@@ -9,6 +9,7 @@ import Footer from "../components/Layout/Footer";
 // Components
 import TrailerModal from "../components/Layout/TrailerModal";
 import MovieSection from "../components/Layout/MovieSection";
+import Button from "../components/Elements/Button/Button";
 
 // Redux
 import {
@@ -18,6 +19,8 @@ import {
   fetchNowPlayingMovies,
 } from "../store/movieSlice";
 
+import { showMovie } from "../store/uiSlice";
+
 const MoviePage = () => {
   const dispatch = useDispatch();
 
@@ -26,6 +29,7 @@ const MoviePage = () => {
   );
 
   const favorites = useSelector((state) => state.favorite.movies);
+  const view = useSelector((state) => state.ui.view);
 
   useEffect(() => {
     dispatch(fetchPopularMovies());
@@ -44,18 +48,31 @@ const MoviePage = () => {
       <Header />
 
       <div className="max-w-[1300px] mx-auto px-6 py-10 flex flex-col gap-14">
-        <MovieSection
-          title="Now Playing"
-          movies={nowPlaying}
-          variant="landscape"
-        />
+        {/* MOVIE VIEW */}
+        {view === "movie" && (
+          <>
+            <MovieSection
+              title="Now Playing"
+              movies={nowPlaying}
+              variant="landscape"
+            />
+            <MovieSection title="Movies" movies={popular} />
+            <MovieSection title="Top Rated" movies={topRated} />
+            <MovieSection title="Upcoming" movies={upcoming} />
+          </>
+        )}
 
-        <MovieSection title="Movies" movies={popular} />
-        <MovieSection title="Top Rated" movies={topRated} />
-        <MovieSection title="Upcoming" movies={upcoming} />
-
-        {favorites.length > 0 && (
-          <MovieSection title="My Favorite" movies={favorites} />
+        {/* FAVORITE VIEW */}
+        {view === "favorite" && (
+          <>
+            {favorites.length > 0 ? (
+              <MovieSection title="My Favorite" movies={favorites} />
+            ) : (
+              <div className="text-center text-white mt-20">
+                <p className="text-xl mb-4">No favorite movie yet</p>
+              </div>
+            )}
+          </>
         )}
       </div>
 

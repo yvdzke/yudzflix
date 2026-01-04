@@ -4,6 +4,9 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getUser, deleteUser } from "../../store/authSlice";
 
+// 🔴 NEW
+import { showMovie, showFavorite } from "../../store/uiSlice";
+
 const NavBar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -14,16 +17,12 @@ const NavBar = () => {
   const [openProfile, setOpenProfile] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  /* =========================
-     GET USER (REDUX)
-  ========================= */
+  // getUser
   useEffect(() => {
     dispatch(getUser());
   }, [dispatch]);
 
-  /* =========================
-     SCROLL EFFECT
-  ========================= */
+  // Scroll Effect
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
@@ -33,18 +32,16 @@ const NavBar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  /* =========================
-     AUTH LOGIC
-  ========================= */
+  // logoutUser
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     navigate("/");
   };
 
+  // deleteUser
   const handleDeleteUser = () => {
     const storedUser = localStorage.getItem("user");
-
     if (!storedUser) return;
 
     const userId = JSON.parse(storedUser).id;
@@ -56,9 +53,7 @@ const NavBar = () => {
     });
   };
 
-  /* =========================
-     UI LOGIC
-  ========================= */
+  // ui Logic
   const hideAuthLinks =
     location.pathname === "/login" ||
     location.pathname === "/register" ||
@@ -72,9 +67,7 @@ const NavBar = () => {
   const storedUser = localStorage.getItem("user");
   const profileUser = storedUser ? JSON.parse(storedUser).username : "User";
 
-  /* =========================
-     RENDER
-  ========================= */
+  // Render Area
   return (
     <nav
       className={`fixed z-50 flex items-center justify-between top-0 left-0 right-0 px-4 py-4 transition-all duration-300
@@ -84,7 +77,8 @@ const NavBar = () => {
     >
       {/* LOGO */}
       <Link
-        to="/"
+        to="/movie"
+        onClick={() => dispatch(showMovie())} // 🔴 NEW
         className="flex items-center gap-2 font-bold text-white text-xl"
       >
         <MdMovie className="text-3xl" />
@@ -97,7 +91,13 @@ const NavBar = () => {
           <ul className="flex gap-6 text-white font-medium">
             <li className="cursor-pointer hover:text-gray-400">Series</li>
             <li className="cursor-pointer hover:text-gray-400">Film</li>
-            <li className="cursor-pointer hover:text-gray-400">My Favorite</li>
+
+            <li
+              onClick={() => dispatch(showFavorite())}
+              className="cursor-pointer hover:text-gray-400"
+            >
+              My Favorite
+            </li>
           </ul>
         </div>
       )}
@@ -123,7 +123,6 @@ const NavBar = () => {
       {/* PROFILE */}
       {!hideBeranda && storedUser && (
         <div className="relative mr-4">
-          {/* Trigger */}
           <div
             onClick={() => setOpenProfile(!openProfile)}
             className="flex items-center gap-2 cursor-pointer"
@@ -136,7 +135,6 @@ const NavBar = () => {
             />
           </div>
 
-          {/* Dropdown */}
           {openProfile && (
             <div className="absolute right-0 mt-3 w-48 bg-black border border-gray-700 rounded-md shadow-lg">
               <button
@@ -151,7 +149,7 @@ const NavBar = () => {
 
               <button
                 onClick={handleLogout}
-                className="block w-full text-left px-4 py-3 text-red-400 hover:bg-gray-800"
+                className="block w-full text-left px-4 py-3 text-red-500 hover:bg-gray-800"
               >
                 Logout
               </button>
