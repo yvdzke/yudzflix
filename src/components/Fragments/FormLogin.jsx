@@ -1,9 +1,10 @@
 import InputForm from "../Elements/Input/index.jsx";
 import Button from "../Elements/Button/Button.jsx";
 import { useNavigate } from "react-router-dom";
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { loginAuth } from "../../store/authSlice";
+// Import action yang baru
+import { loginUser } from "../../store/authSlice";
 
 const FormLogin = () => {
   const dispatch = useDispatch();
@@ -11,41 +12,47 @@ const FormLogin = () => {
 
   const { loading, error } = useSelector((state) => state.auth);
 
-  const [username, setUsername] = useState("");
+  // Backend minta login via Email
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [enterDetail, setEnterDetails] = useState("");
-
-  const usernameRef = useRef(null);
 
   const handleLogin = (e) => {
     e.preventDefault();
 
-    if (!username || !password) {
-      setEnterDetails("Please enter your details");
+    if (!email || !password) {
+      setEnterDetails("Please enter your email and password");
       return;
     }
 
-    dispatch(loginAuth({ username, password })).then((res) => {
-      if (!res.error) {
+    // Dispatch action loginUser
+    dispatch(loginUser({ email, password }))
+      .unwrap()
+      .then(() => {
+        // Kalau sukses, redirect ke home/movie
         navigate("/movie");
-      }
-    });
+      })
+      .catch((err) => {
+        console.error("Login Failed:", err);
+      });
   };
 
   return (
     <form onSubmit={handleLogin} className="space-y-4">
       {(enterDetail || error) && (
-        <p className="text-red-600">{enterDetail || error}</p>
+        <p className="text-red-600 text-center">
+          {enterDetail || (typeof error === "string" ? error : "Login Failed")}
+        </p>
       )}
 
+      {/* Ganti Username jadi Email */}
       <InputForm
-        ref={usernameRef}
-        name="username"
-        label="Username"
-        type="text"
-        value={username}
-        placeholder="Enter your username"
-        onChange={(e) => setUsername(e.target.value)}
+        name="email"
+        label="Email"
+        type="email"
+        value={email}
+        placeholder="Enter your email"
+        onChange={(e) => setEmail(e.target.value)}
       />
 
       <InputForm

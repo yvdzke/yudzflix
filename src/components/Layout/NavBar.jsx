@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { MdMovie } from "react-icons/md";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { getUser, deleteUser } from "../../store/authSlice";
+import { useDispatch } from "react-redux"; // Hapus useSelector kalau belum dipake
 
-// 🔴 NEW
+// IMPORT YANG BENAR (Sesuai authSlice baru)
+import { logoutUser } from "../../store/authSlice";
+
 import { showMovie, showFavorite } from "../../store/uiSlice";
 
 const NavBar = () => {
@@ -12,15 +13,13 @@ const NavBar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { users, loading } = useSelector((state) => state.auth);
-
+  // State lokal untuk UI
   const [openProfile, setOpenProfile] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  // getUser
-  useEffect(() => {
-    dispatch(getUser());
-  }, [dispatch]);
+  // Ambil user dari LocalStorage (Karena authSlice kita simpan di sana)
+  const storedUser = JSON.parse(localStorage.getItem("user"));
+  const profileUser = storedUser ? storedUser.username : "User"; // Pakai username dari DB
 
   // Scroll Effect
   useEffect(() => {
@@ -32,28 +31,20 @@ const NavBar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // logoutUser
+  // === FITUR LOGOUT (Update) ===
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    navigate("/");
+    // Panggil action logout dari Redux (ini otomatis hapus localStorage juga)
+    dispatch(logoutUser());
+
+    // Redirect ke halaman login
+    navigate("/login");
   };
 
-  // deleteUser
-  const handleDeleteUser = () => {
-    const storedUser = localStorage.getItem("user");
-    if (!storedUser) return;
+  // === FITUR DELETE (Hapus Dulu) ===
+  // Kita hapus dulu karena Backend belum ada endpoint DELETE user.
+  // Nanti kalau mau fitur ini, kita harus update Backend dulu.
 
-    const userId = JSON.parse(storedUser).id;
-
-    dispatch(deleteUser(userId)).then(() => {
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      navigate("/");
-    });
-  };
-
-  // ui Logic
+  // Logic Sembunyikan Navbar
   const hideAuthLinks =
     location.pathname === "/login" ||
     location.pathname === "/register" ||
@@ -63,9 +54,6 @@ const NavBar = () => {
     location.pathname === "/login" ||
     location.pathname === "/register" ||
     location.pathname === "/";
-
-  const storedUser = localStorage.getItem("user");
-  const profileUser = storedUser ? JSON.parse(storedUser).username : "User";
 
   // Render Area
   return (
@@ -78,16 +66,16 @@ const NavBar = () => {
       {/* LOGO */}
       <Link
         to="/movie"
-        onClick={() => dispatch(showMovie())} // 🔴 NEW
+        onClick={() => dispatch(showMovie())}
         className="flex items-center gap-2 font-bold text-white text-xl"
       >
         <MdMovie className="text-3xl" />
         YudzFlix
       </Link>
 
-      {/* MENU */}
+      {/* MENU TENGAH */}
       {!hideBeranda && (
-        <div className="mr-auto ml-10">
+        <div className="mr-auto ml-10 hidden md:block">
           <ul className="flex gap-6 text-white font-medium">
             <li className="cursor-pointer hover:text-gray-400">Series</li>
             <li className="cursor-pointer hover:text-gray-400">Film</li>
@@ -102,63 +90,59 @@ const NavBar = () => {
         </div>
       )}
 
-      {/* AUTH BUTTON */}
+      {/* TOMBOL LOGIN / REGISTER (Kalau belum login) */}
       {!hideAuthLinks && !storedUser && (
         <div className="flex items-center gap-4 mr-4">
           <Link
             to="/login"
-            className="text-white w-20 h-7 text-center rounded-md border bg-transparent hover:border-indigo-500"
+            className="text-white w-20 h-7 flex items-center justify-center rounded-md border bg-transparent hover:border-indigo-500"
           >
             Login
           </Link>
           <Link
             to="/register"
-            className="text-white w-20 h-7 text-center rounded-md border bg-transparent hover:border-indigo-500"
+            className="text-white w-20 h-7 flex items-center justify-center rounded-md border bg-transparent hover:border-indigo-500"
           >
             Register
           </Link>
         </div>
       )}
 
-      {/* PROFILE */}
+      {/* PROFILE DROPDOWN (Kalau sudah login) */}
       {!hideBeranda && storedUser && (
         <div className="relative mr-4">
           <div
             onClick={() => setOpenProfile(!openProfile)}
-            className="flex items-center gap-2 cursor-pointer"
+            className="flex items-center gap-2 cursor-pointer select-none"
           >
-            <p className="text-white font-bold">{profileUser}</p>
+            <p className="text-white font-bold hidden sm:block">
+              {profileUser}
+            </p>
             <img
               src="https://res.cloudinary.com/dvym5vxsw/image/upload/v1766191504/mypp_h0ujrc.jpg"
               alt="profile"
-              className="w-10 h-10 rounded-full"
+              className="w-10 h-10 rounded-full object-cover border-2 border-transparent hover:border-white transition-all"
             />
           </div>
 
+          {/* Dropdown Menu */}
           {openProfile && (
-            <div className="absolute right-0 mt-3 w-48 bg-black border border-gray-700 rounded-md shadow-lg">
+            <div className="absolute right-0 mt-3 w-48 bg-black/90 border border-gray-700 rounded-md shadow-lg overflow-hidden z-50">
               <button
                 onClick={() => {
                   navigate("/profile");
                   setOpenProfile(false);
                 }}
-                className="block w-full text-left px-4 py-3 text-white hover:bg-gray-800"
+                className="block w-full text-left px-4 py-3 text-white hover:bg-gray-800 transition-colors"
               >
                 Go to Profile
               </button>
 
               <button
                 onClick={handleLogout}
-                className="block w-full text-left px-4 py-3 text-red-500 hover:bg-gray-800"
+                className="block w-full text-left px-4 py-3 text-red-500 hover:bg-gray-800 transition-colors border-t border-gray-700"
               >
                 Logout
-              </button>
-
-              <button
-                onClick={handleDeleteUser}
-                className="block w-full text-left px-4 py-3 text-red-500 hover:bg-gray-800"
-              >
-                Delete User
               </button>
             </div>
           )}

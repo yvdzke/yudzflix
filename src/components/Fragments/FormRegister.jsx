@@ -4,55 +4,88 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
-// Redux
-import { registerAuth } from "../../store/authSlice";
+// Redux (Pastikan nama importnya sesuai authSlice yang baru)
+import { registerUser } from "../../store/authSlice";
 
 const FormRegister = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  // Ambil state dari Redux
   const { loading, error } = useSelector((state) => state.auth);
 
+  // State untuk input form (Sesuai kolom Database)
+  const [fullname, setFullname] = useState("");
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
   const [enterDetail, setEnterDetails] = useState("");
 
   const handleRegister = (e) => {
     e.preventDefault();
 
-    if (!username || !password) {
-      setEnterDetails("Please enter your details");
+    // Validasi kelengkapan data
+    if (!fullname || !username || !email || !password) {
+      setEnterDetails("Please fill in all fields!");
       return;
     }
 
-    const userData = { username, password };
+    // Bungkus data
+    const userData = { fullname, username, email, password };
 
-    dispatch(registerAuth(userData))
+    // Tembak ke Backend lewat Redux
+    dispatch(registerUser(userData))
       .unwrap()
       .then(() => {
+        alert("Register Berhasil! Silakan Login.");
         navigate("/login");
       })
       .catch((err) => {
-        alert(err || "Register Failed. Please try again.");
+        // Error sudah dihandle di authSlice, tapi bisa alert juga disini
+        console.error("Gagal Register:", err);
       });
   };
 
   return (
     <>
-      <p className="text-red-600">{enterDetail}</p>
+      <p className="text-red-600 text-center mb-2">{enterDetail}</p>
+
       <form onSubmit={handleRegister} className="flex flex-col gap-4">
+        {/* INPUT FULLNAME (BARU) */}
+        <InputForm
+          name="fullname"
+          label="Full Name"
+          type="text"
+          value={fullname}
+          onChange={(e) => setFullname(e.target.value)}
+          placeholder="Enter your full name"
+        />
+
+        {/* INPUT USERNAME */}
         <InputForm
           name="username"
-          label="Create Username"
+          label="Username"
           type="text"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           placeholder="Create Username"
         />
 
+        {/* INPUT EMAIL (BARU) */}
+        <InputForm
+          name="email"
+          label="Email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="example@mail.com"
+        />
+
+        {/* INPUT PASSWORD */}
         <InputForm
           name="password"
-          label="Create Password"
+          label="Password"
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
@@ -71,7 +104,12 @@ const FormRegister = () => {
           {loading ? "Registering..." : "Register"}
         </Button>
 
-        {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+        {/* Tampilkan Error dari Backend jika ada */}
+        {error && (
+          <p className="text-red-500 text-sm text-center mt-2">
+            {typeof error === "string" ? error : error.message}
+          </p>
+        )}
       </form>
     </>
   );
