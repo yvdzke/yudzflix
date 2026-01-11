@@ -38,11 +38,9 @@ const FormRegister = () => {
     dispatch(registerUser(userData))
       .unwrap()
       .then(() => {
-        alert("Register Berhasil! Silakan Login.");
         navigate("/login");
       })
       .catch((err) => {
-        // Error sudah dihandle di authSlice, tapi bisa alert juga disini
         console.error("Gagal Register:", err);
       });
   };
@@ -50,9 +48,7 @@ const FormRegister = () => {
   return (
     <>
       <p className="text-red-600 text-center mb-2">{enterDetail}</p>
-
       <form onSubmit={handleRegister} className="flex flex-col gap-4">
-        {/* INPUT FULLNAME (BARU) */}
         <InputForm
           name="fullname"
           label="Full Name"
@@ -103,8 +99,6 @@ const FormRegister = () => {
         >
           {loading ? "Registering..." : "Register"}
         </Button>
-
-        {/* Tampilkan Error dari Backend jika ada */}
         {error && (
           <p className="text-red-500 text-sm text-center mt-2">
             {typeof error === "string" ? error : error.message}

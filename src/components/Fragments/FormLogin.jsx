@@ -1,51 +1,71 @@
+import { useState, useEffect } from "react"; // ✅ Tambah useEffect
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+
+// Components
 import InputForm from "../Elements/Input/index.jsx";
 import Button from "../Elements/Button/Button.jsx";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-// Import action yang baru
+
+// Redux Action
 import { loginUser } from "../../store/authSlice";
 
 const FormLogin = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { loading, error } = useSelector((state) => state.auth);
+  // Ambil state dari Redux
+  const { loading, error, token } = useSelector((state) => state.auth);
 
-  // Backend minta login via Email
+  // State Lokal Form
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [enterDetail, setEnterDetails] = useState("");
+  const [localError, setLocalError] = useState("");
+
+  // Kalau token sudah ada langsung ke /movie
+  useEffect(() => {
+    if (token) {
+      navigate("/movie");
+    }
+  }, [token, navigate]);
 
   const handleLogin = (e) => {
     e.preventDefault();
 
+    // Validasi input kosong
     if (!email || !password) {
-      setEnterDetails("Please enter your email and password");
+      setLocalError("Please enter your email and password");
       return;
     }
 
-    // Dispatch action loginUser
+    // Reset error sebelum request baru
+    setLocalError("");
+
+    // Dispatch action login
     dispatch(loginUser({ email, password }))
       .unwrap()
       .then(() => {
-        // Kalau sukses, redirect ke home/movie
         navigate("/movie");
       })
       .catch((err) => {
-        setEnterDetails("Incorrect Email or Password", err);
+        // Kalau Gagal:
+        console.error("Login Error:", err);
+        // Tampilkan pesan error dari backend atau default
+        setLocalError(err || "Incorrect Email or Password");
       });
   };
 
   return (
     <form onSubmit={handleLogin} className="space-y-4">
-      {(enterDetail || error) && (
-        <p className="text-red-600 text-center">
-          {enterDetail || (typeof error === "string" ? error : "Login Failed")}
-        </p>
+      {/* TAMPILAN ERROR */}
+      {(localError || error) && (
+        <div className="bg-red-500/10 border border-red-500 rounded p-2 text-center">
+          <p className="text-red-500 text-sm font-medium">
+            {localError || (typeof error === "string" ? error : "Login Failed")}
+          </p>
+        </div>
       )}
 
-      {/* Ganti Username jadi Email */}
+      {/* INPUT EMAIL */}
       <InputForm
         name="email"
         label="Email"
@@ -55,6 +75,7 @@ const FormLogin = () => {
         onChange={(e) => setEmail(e.target.value)}
       />
 
+      {/* INPUT PASSWORD */}
       <InputForm
         name="password"
         label="Password"
@@ -64,10 +85,16 @@ const FormLogin = () => {
         onChange={(e) => setPassword(e.target.value)}
       />
 
+      {/* TOMBOL LOGIN */}
       <Button
         type="submit"
         disabled={loading}
-        varian="w-full py-3 bg-[#3D4142] rounded-full hover:bg-gray-700 transition-colors font-medium"
+        varian={`w-full py-3 rounded-full font-medium transition-colors 
+          ${
+            loading
+              ? "bg-gray-500 cursor-not-allowed"
+              : "bg-[#3D4142] hover:bg-gray-700 text-white"
+          }`}
       >
         {loading ? "Logging in..." : "Login"}
       </Button>
