@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api/favorites";
+const API_URL = "https://yudzflix-backend.vercel.app/api/favorites";
 
 // Helper: Ambil Token biar lolos dari Satpam Backend
 const getAuthHeader = () => {
