@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"; // ✅ Tambah useEffect
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -13,43 +13,36 @@ const FormLogin = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // Ambil state dari Redux
-  const { loading, error, token } = useSelector((state) => state.auth);
+  // Ambil state loading & error saja, token gak usah dipantau di sini
+  const { loading, error } = useSelector((state) => state.auth);
 
   // State Lokal Form
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [localError, setLocalError] = useState("");
 
-  // Kalau token sudah ada langsung ke /movie
-  useEffect(() => {
-    if (token) {
-      navigate("/movie");
-    }
-  }, [token, navigate]);
+  // ❌ useEffect YANG TADI DIHAPUS SAJA (BIANG KEROK KEDIP-KEDIP) ❌
 
   const handleLogin = (e) => {
     e.preventDefault();
 
-    // Validasi input kosong
     if (!email || !password) {
       setLocalError("Please enter your email and password");
       return;
     }
 
-    // Reset error sebelum request baru
     setLocalError("");
 
-    // Dispatch action login
+    // 🔥 EKSEKUSI LOGIN (Manual Redirect)
     dispatch(loginUser({ email, password }))
       .unwrap()
       .then(() => {
-        navigate("/movie");
+        // ✅ Cuma pindah kalau login beneran sukses barusan
+        // Pakai replace: true biar user gak bisa back ke login
+        navigate("/movie", { replace: true });
       })
       .catch((err) => {
-        // Kalau Gagal:
-        console.error("Login Error:", err);
-        // Tampilkan pesan error dari backend atau default
+        console.error("Login Gagal:", err);
         setLocalError(err || "Incorrect Email or Password");
       });
   };
@@ -65,7 +58,6 @@ const FormLogin = () => {
         </div>
       )}
 
-      {/* INPUT EMAIL */}
       <InputForm
         name="email"
         label="Email"
@@ -75,7 +67,6 @@ const FormLogin = () => {
         onChange={(e) => setEmail(e.target.value)}
       />
 
-      {/* INPUT PASSWORD */}
       <InputForm
         name="password"
         label="Password"
@@ -85,7 +76,6 @@ const FormLogin = () => {
         onChange={(e) => setPassword(e.target.value)}
       />
 
-      {/* TOMBOL LOGIN */}
       <Button
         type="submit"
         disabled={loading}
