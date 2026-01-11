@@ -34,13 +34,11 @@ const FormLogin = () => {
     dispatch(loginUser({ email, password }))
       .unwrap()
       .then(() => {
-        // alert("Login Sukses! OTW pindah halaman...");
-        // navigate("/movie", { replace: true });
-        window.location.href = "/movie";
+        navigate("/movie");
+        // window.location.href = "/movie";
       })
       .catch((err) => {
-        alert("Login Gagal Boss: " + JSON.stringify(err));
-        console.error("Login Gagal:", err);
+        // console.error("Login Gagal:", err);
         setLocalError(err || "Incorrect Email or Password");
       });
   };
