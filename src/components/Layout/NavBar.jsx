@@ -128,7 +128,7 @@ const NavBar = () => {
           {/* Dropdown Menu */}
           {openProfile && (
             <div className="absolute right-0 mt-3 w-48 bg-black/90 border border-gray-700 rounded-md shadow-lg overflow-hidden z-50">
-              <p className="text-white font-bold hidden sm:block">
+              <p className="block w-full text-left px-4 py-3 text-white hover:bg-gray-800 transition-colors">
                 {profileUser}
               </p>
               <button
