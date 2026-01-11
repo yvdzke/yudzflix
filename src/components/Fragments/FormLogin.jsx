@@ -21,8 +21,6 @@ const FormLogin = () => {
   const [password, setPassword] = useState("");
   const [localError, setLocalError] = useState("");
 
-  // ❌ useEffect YANG TADI DIHAPUS SAJA (BIANG KEROK KEDIP-KEDIP) ❌
-
   const handleLogin = (e) => {
     e.preventDefault();
 
@@ -33,12 +31,12 @@ const FormLogin = () => {
 
     setLocalError("");
 
-    // 🔥 EKSEKUSI LOGIN (Manual Redirect)
     dispatch(loginUser({ email, password }))
       .unwrap()
       .then(() => {
-        alert("Login Sukses! OTW pindah halaman...");
-        navigate("/movie", { replace: true });
+        // alert("Login Sukses! OTW pindah halaman...");
+        // navigate("/movie", { replace: true });
+        window.location.href = "/movie";
       })
       .catch((err) => {
         alert("Login Gagal Boss: " + JSON.stringify(err));
