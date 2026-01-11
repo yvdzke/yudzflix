@@ -2,6 +2,7 @@ const pool = require("../config/database");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
+// Register Controller
 exports.register = async (req, res) => {
   try {
     // Tangkap data sesuai ENTITAS USER di tugas
@@ -36,6 +37,8 @@ exports.register = async (req, res) => {
   }
 };
 
+// ==============================
+// Login Controller
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;

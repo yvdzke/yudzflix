@@ -33,7 +33,7 @@ const FormLogin = () => {
         navigate("/movie");
       })
       .catch((err) => {
-        console.error("Login Failed:", err);
+        setEnterDetails("Incorrect Email or Password", err);
       });
   };
 
