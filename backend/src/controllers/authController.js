@@ -69,7 +69,7 @@ exports.login = async (req, res) => {
       { expiresIn: "1d" }
     );
 
-    // 5. Siapkan Data User (Pastikan Password TIDAK IKUT)
+    // 5. Data User yang mau dikirim (kecuali password)
     const userData = {
       id: user.id,
       fullname: user.fullname,
@@ -77,14 +77,14 @@ exports.login = async (req, res) => {
       email: user.email,
     };
 
-    // 6. Kirim Response
+    // 6. Response
     res.status(200).json({
       message: "Login Berhasil",
       token,
       user: userData,
     });
   } catch (err) {
-    console.error("Login Error:", err.message); // Log di terminal server biar tau errornya apa
+    console.error("Login Error:", err.message);
     res.status(500).json({ message: "Terjadi kesalahan pada server" });
   }
 };
