@@ -37,11 +37,11 @@ const FormLogin = () => {
     dispatch(loginUser({ email, password }))
       .unwrap()
       .then(() => {
-        // ✅ Cuma pindah kalau login beneran sukses barusan
-        // Pakai replace: true biar user gak bisa back ke login
+        alert("Login Sukses! OTW pindah halaman...");
         navigate("/movie", { replace: true });
       })
       .catch((err) => {
+        alert("Login Gagal Boss: " + JSON.stringify(err));
         console.error("Login Gagal:", err);
         setLocalError(err || "Incorrect Email or Password");
       });
