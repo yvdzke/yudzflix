@@ -17,10 +17,10 @@ const NavBar = () => {
   const [openProfile, setOpenProfile] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  // Ambil user dari LocalStorage
+  // ✅ AMBIL DATA USER (JANGAN DIHAPUS)
   const storedUser = JSON.parse(localStorage.getItem("user"));
-  const profileUser = storedUser ? storedUser.username : "User";
-  const fullname = storedUser ? storedUser.fullname : username;
+  const username = storedUser ? storedUser.username : "User";
+  const fullname = storedUser ? storedUser.fullname : "";
 
   // Scroll Effect
   useEffect(() => {
@@ -37,14 +37,12 @@ const NavBar = () => {
     navigate("/login");
   };
 
-  // Logic Sembunyikan Navbar (Halaman Auth)
+  // Logic Sembunyikan Navbar
   const hideAuthLinks =
     location.pathname === "/login" ||
     location.pathname === "/register" ||
     location.pathname === "/movie";
 
-  // Logic Sembunyikan Menu (Series, Film, Favorite)
-  // Hilang di: Login, Register, Home Awal, dan Profile Page
   const hideMiddleMenu =
     location.pathname === "/login" ||
     location.pathname === "/register" ||
@@ -60,9 +58,8 @@ const NavBar = () => {
           : "bg-transparent"
       }`}
     >
-      {/* === BAGIAN KIRI: LOGO + MENU === */}
+      {/* === KIRI: LOGO + MENU === */}
       <div className="flex items-center gap-10">
-        {/* 1. LOGO */}
         <Link
           to="/movie"
           onClick={() => dispatch(showMovie())}
@@ -72,8 +69,6 @@ const NavBar = () => {
           YudzFlix
         </Link>
 
-        {/* 2. MENU (Series, Film, Favorite) */}
-        {/* Posisinya sekarang nempel di sebelah logo (gap-10) */}
         {!hideMiddleMenu && (
           <div className="hidden md:block">
             <ul className="flex gap-6 text-sm font-semibold text-gray-300">
@@ -94,9 +89,8 @@ const NavBar = () => {
         )}
       </div>
 
-      {/* === BAGIAN KANAN: AUTH / PROFILE === */}
+      {/* === KANAN: AUTH / PROFILE === */}
       <div>
-        {/* 3. TOMBOL AUTH (Login/Register) - Muncul kalau belum login */}
         {!hideAuthLinks && !storedUser && (
           <div className="flex items-center gap-4">
             <Link
@@ -114,7 +108,6 @@ const NavBar = () => {
           </div>
         )}
 
-        {/* 4. PROFILE DROPDOWN (GitHub Style) - Muncul kalau sudah login */}
         {storedUser && (
           <div className="relative">
             <button
@@ -129,29 +122,24 @@ const NavBar = () => {
               <IoCaretDown className="text-gray-400 text-xs mt-1" />
             </button>
 
-            {/* DROPDOWN MENU */}
             {openProfile && (
               <>
-                {/* Overlay transparan buat nutup dropdown pas klik di luar */}
                 <div
                   className="fixed inset-0 z-40"
                   onClick={() => setOpenProfile(false)}
                 ></div>
 
-                {/* Box Dropdown */}
                 <div className="absolute right-0 mt-2 w-64 bg-[#161b22] border border-[#30363d] rounded-md shadow-xl py-2 z-50 text-sm animate-in fade-in zoom-in-95 duration-100">
-                  {/* Header: Signed in as... */}
                   <div className="px-4 py-2 border-b border-[#30363d]">
                     <p className="text-gray-400 text-xs">Signed in as</p>
-                    <p className="font-bold text-white truncate">
-                      {profileUser}
-                    </p>
-                    <p className="text-xs text-gray-500 truncate mt-0.5">
-                      {fullname}
-                    </p>
+                    <p className="font-bold text-white truncate">{username}</p>
+                    {fullname && (
+                      <p className="text-xs text-gray-500 truncate mt-0.5">
+                        {fullname}
+                      </p>
+                    )}
                   </div>
 
-                  {/* Body Links */}
                   <div className="py-2">
                     <button
                       onClick={() => {
@@ -173,7 +161,6 @@ const NavBar = () => {
                     </button>
                   </div>
 
-                  {/* Footer: Sign out */}
                   <div className="pt-2 border-t border-[#30363d]">
                     <button
                       onClick={handleLogout}
