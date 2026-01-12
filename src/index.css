@@ -18,3 +18,12 @@
   background-image: url("https://www.youtube.com/embed/R4wiXj9NmEE?si=cSRymUkWl9VQNp3_&amp;start=2");
 }
 /* Images End */
+
+/* Sembunyikan Scrollbar tapi tetep bisa discroll */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
