@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Pencil, AlertTriangle, User as UserIcon } from "lucide-react"; // Rename User biar gak bentrok sama variable
 import { useSelector, useDispatch } from "react-redux";
+import Button from "../components/Elements/Button/Button";
 
 // Component
 import NavBar from "../components/Layout/NavBar";
 import Footer from "../components/Layout/Footer";
-import CardMovies from "../components/Fragments/CardMovies"; // Kita pakai CardMovies langsung atau MovieSection kalau support props
+import MovieSection from "../components/Layout/MovieSection";
 
 const ProfilePage = () => {
   // 1. Ambil Data dari Redux (Sesuai source of truth)
@@ -186,37 +187,19 @@ const ProfilePage = () => {
 
         {/* --- DAFTAR SAYA (MY LIST - SLIDER) --- */}
         <div className="mt-16">
-          <h2 className="text-2xl font-semibold mb-6">Daftar Saya</h2>
+          <h2 className="text-2xl font-semibold mb-6">My Watch List</h2>
 
           {favorites.length > 0 ? (
-            <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-4">
-              {favorites.map((movie) => (
-                <div key={movie.id} className="flex-shrink-0 w-[200px]">
-                  <CardMovies variant="portrait">
-                    <CardMovies.CardImage
-                      img={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}
-                      name={movie.title}
-                      variant="portrait"
-                    />
-                    <CardMovies.Overlay
-                      movie={movie}
-                      original_title={movie.title}
-                    />
-                  </CardMovies>
-                </div>
-              ))}
-            </div>
+            <MovieSection customSlide={5} title="" movies={favorites} />
           ) : (
             <div className="text-center py-10 bg-[#222222] rounded-lg border border-gray-700 border-dashed">
-              <p className="text-gray-400">
-                Belum ada film di daftar favoritmu.
-              </p>
-              <button
+              <p className="text-gray-400">No favorite movies yet.</p>
+              <Button
                 onClick={() => (window.location.href = "/movie")}
-                className="text-blue-500 text-sm mt-2 hover:underline"
+                varian="text-blue-500  mt-2 hover:underline"
               >
-                Cari Film
-              </button>
+                Explore Movie
+              </Button>
             </div>
           )}
         </div>
