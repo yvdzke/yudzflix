@@ -1,8 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-// URL Backend Kamu (Pastikan backend nyala di port 5000)
-const API_URL = "https://yudzflix-backend.vercel.app/api/auth";
+// URL Backend Kamu
+const API_URL = import.meta.env.DEV
+  ? "http://localhost:5000/api/auth"
+  : "https://yudzflix-backend.vercel.app/api/auth";
 
 // 1. REGISTER ACTION
 export const registerUser = createAsyncThunk(
