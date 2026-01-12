@@ -189,10 +189,8 @@ const ProfilePage = () => {
           <h2 className="text-2xl font-semibold mb-6">Daftar Saya</h2>
 
           {favorites.length > 0 ? (
-            // 👇 GANTI GRID JADI FLEX SLIDER
             <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-4">
               {favorites.map((movie) => (
-                // 👇 Bungkus pakai div flex-shrink-0 biar kartu gak gepeng
                 <div key={movie.id} className="flex-shrink-0 w-[200px]">
                   <CardMovies variant="portrait">
                     <CardMovies.CardImage
