@@ -1,67 +1,57 @@
-import React, { useState } from "react";
-import { Pencil, User, AlertTriangle, ChevronDown } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Pencil, AlertTriangle, User as UserIcon } from "lucide-react"; // Rename User biar gak bentrok sama variable
+import { useSelector, useDispatch } from "react-redux";
 
 // Component
 import NavBar from "../components/Layout/NavBar";
 import Footer from "../components/Layout/Footer";
-import MovieSection from "../components/Layout/MovieSection";
+import CardMovies from "../components/Fragments/CardMovies"; // Kita pakai CardMovies langsung atau MovieSection kalau support props
 
 const ProfilePage = () => {
-  // 1. Data User (Sesuai Tabel User di ERD)
-  const [user, setUser] = useState({
-    username: "William",
-    email: "william1980@gmail.com",
-    password: "****************",
-    avatar: "https://i.pravatar.cc/150?u=william", // Avatar placeholder
+  // 1. Ambil Data dari Redux (Sesuai source of truth)
+  const { user } = useSelector((state) => state.auth);
+  const { movies: favorites } = useSelector((state) => state.favorite);
+
+  // 2. State Lokal untuk Form Edit
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    // Password gak kita tampilin/edit disini demi keamanan, biasanya ada menu ganti password terpisah
   });
 
-  // 2. Data MyList (Sesuai Tabel MyList & Series_Film di ERD)
-  const myList = [
-    {
-      id: 1,
-      title: "All of Us Are Dead",
-      image: "https://image.tmdb.org/t/p/w500/pTEFqAjLd5YTsMD6NSUxV6Dq7A6.jpg",
-      tag: "Top 10",
-    },
-    {
-      id: 2,
-      title: "Big Hero 6",
-      image: "https://image.tmdb.org/t/p/w500/2mxS4wUimwlLmI1xp6QW6NSU361.jpg",
-      tag: "Episode Baru",
-    },
-    {
-      id: 3,
-      title: "My Hero Academia",
-      image: "https://image.tmdb.org/t/p/w500/ivOLM47yJt90P19RH1dQoYE6zNf.jpg",
-      tag: "Episode Baru",
-    },
-    {
-      id: 4,
-      title: "Blue Lock",
-      image: "https://image.tmdb.org/t/p/w500/veM5Pq6y8B34t8d82V0uHjF8yvj.jpg",
-      tag: "Episode Baru",
-    },
-    {
-      id: 5,
-      title: "Ted Lasso",
-      image:
-        "https://image.tmdb.org/t/p/w500/q32w24cR76E3n5J5q32w24cR76E3n5.jpg",
-      tag: "Top 10",
-    }, // Link gambar broken, ganti sendiri ya
-    {
-      id: 6,
-      title: "Duty After School",
-      image: "https://image.tmdb.org/t/p/w500/pD6sL4vntUOWbaZsa3SmG6hKq7j.jpg",
-      tag: "Episode Baru",
-    },
-  ];
+  // 3. Sinkronisasi Data Redux ke State Lokal
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        username: user.username || "",
+        email: user.email || "",
+      });
+    }
+  }, [user]);
+
+  // Handle Perubahan Input
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // Handle Simpan (Sementara log dulu, nanti disambung ke API update profile)
+  const handleSave = () => {
+    console.log("Data disimpan:", formData);
+    setIsEditing(false);
+    // Disini nanti dispatch(updateUser(formData)) ke backend
+  };
 
   return (
     <div className="min-h-screen bg-[#181818] text-white font-sans">
-      <NavBar></NavBar>
+      <NavBar />
 
       {/* --- CONTENT UTAMA --- */}
-      <main className="max-w-6xl mx-auto px-6 py-10">
+      <main className="max-w-6xl mx-auto px-6 py-10 pt-24">
         {/* Layout Grid: Kiri (Form) - Kanan (Status Langganan) */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10">
           {/* BAGIAN KIRI: Edit Profil */}
@@ -70,11 +60,17 @@ const ProfilePage = () => {
 
             {/* Avatar Section */}
             <div className="flex items-center gap-6 mb-8">
-              <img
-                src={user.avatar}
-                alt="Profile"
-                className="w-24 h-24 rounded-full object-cover border-2 border-gray-700"
-              />
+              <div className="w-24 h-24 rounded-full border-2 border-gray-700 overflow-hidden bg-gray-800 flex items-center justify-center">
+                {user?.avatar ? (
+                  <img
+                    src={user.avatar}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <UserIcon size={40} className="text-gray-400" />
+                )}
+              </div>
               <button className="text-blue-500 text-sm font-medium border border-blue-500 px-4 py-1.5 rounded-full hover:bg-blue-500 hover:text-white transition">
                 Ubah Foto
               </button>
@@ -83,64 +79,85 @@ const ProfilePage = () => {
             {/* Form Inputs */}
             <div className="space-y-4">
               {/* Input Nama */}
-              <div className="bg-[#222222] border border-gray-700 rounded p-3 flex justify-between items-center group focus-within:border-white transition">
+              <div
+                className={`bg-[#222222] border rounded p-3 flex justify-between items-center group transition
+                ${isEditing ? "border-white" : "border-gray-700"}`}
+              >
                 <div className="w-full">
                   <label className="block text-gray-400 text-xs mb-1">
                     Nama Pengguna
                   </label>
                   <input
+                    name="username"
                     type="text"
-                    value={user.username}
+                    value={formData.username}
+                    onChange={handleChange}
                     className="bg-transparent w-full text-white outline-none font-medium"
-                    readOnly // Kasih readOnly dulu kalau belum ada logic edit
+                    readOnly={!isEditing}
                   />
                 </div>
-                <Pencil
-                  size={16}
-                  className="text-gray-500 group-hover:text-white cursor-pointer"
-                />
+                {/* Tombol Edit Trigger */}
+                {!isEditing && (
+                  <Pencil
+                    size={16}
+                    onClick={() => setIsEditing(true)}
+                    className="text-gray-500 hover:text-white cursor-pointer"
+                  />
+                )}
               </div>
 
               {/* Input Email */}
-              <div className="bg-[#222222] border border-gray-700 rounded p-3 flex justify-between items-center group">
+              <div className="bg-[#222222] border border-gray-700 rounded p-3 flex justify-between items-center opacity-70 cursor-not-allowed">
                 <div className="w-full">
                   <label className="block text-gray-400 text-xs mb-1">
-                    Email
+                    Email (Tidak dapat diubah)
                   </label>
                   <input
+                    name="email"
                     type="email"
-                    value={user.email}
+                    value={formData.email}
                     className="bg-transparent w-full text-gray-300 outline-none"
                     readOnly
                   />
                 </div>
-                {/* Email biasanya gak bisa diedit sembarangan, jadi ga dikasih icon pencil */}
               </div>
 
-              {/* Input Kata Sandi */}
-              <div className="bg-[#222222] border border-gray-700 rounded p-3 flex justify-between items-center group focus-within:border-white transition">
+              {/* Input Kata Sandi (Dummy view) */}
+              <div className="bg-[#222222] border border-gray-700 rounded p-3 flex justify-between items-center group">
                 <div className="w-full">
                   <label className="block text-gray-400 text-xs mb-1">
                     Kata Sandi
                   </label>
                   <input
                     type="password"
-                    value={user.password}
+                    value="dummyPass123"
                     className="bg-transparent w-full text-white outline-none tracking-widest"
                     readOnly
                   />
                 </div>
-                <Pencil
-                  size={16}
-                  className="text-gray-500 group-hover:text-white cursor-pointer"
-                />
+                <button className="text-xs text-blue-500 hover:text-white">
+                  Ganti
+                </button>
               </div>
             </div>
 
-            {/* Tombol Simpan */}
-            <button className="mt-8 bg-blue-700 hover:bg-blue-600 text-white px-8 py-3 rounded font-semibold transition w-full md:w-auto">
-              Simpan
-            </button>
+            {/* Tombol Simpan / Batal */}
+            {isEditing && (
+              <div className="flex gap-4 mt-8">
+                <button
+                  onClick={handleSave}
+                  className="bg-blue-700 hover:bg-blue-600 text-white px-8 py-2 rounded font-semibold transition"
+                >
+                  Simpan
+                </button>
+                <button
+                  onClick={() => setIsEditing(false)}
+                  className="border border-gray-500 hover:border-white text-gray-300 hover:text-white px-8 py-2 rounded font-semibold transition"
+                >
+                  Batal
+                </button>
+              </div>
+            )}
           </div>
 
           {/* BAGIAN KANAN: Status Langganan (Paket) */}
@@ -167,11 +184,47 @@ const ProfilePage = () => {
           </div>
         </div>
 
-        {/* --- DAFTAR SAYA (MY LIST) --- */}
-        <MovieSection></MovieSection>
+        {/* --- DAFTAR SAYA (MY LIST - SLIDER) --- */}
+        <div className="mt-16">
+          <h2 className="text-2xl font-semibold mb-6">Daftar Saya</h2>
+
+          {favorites.length > 0 ? (
+            // 👇 GANTI GRID JADI FLEX SLIDER
+            <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-4">
+              {favorites.map((movie) => (
+                // 👇 Bungkus pakai div flex-shrink-0 biar kartu gak gepeng
+                <div key={movie.id} className="flex-shrink-0 w-[200px]">
+                  <CardMovies variant="portrait">
+                    <CardMovies.CardImage
+                      img={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}
+                      name={movie.title}
+                      variant="portrait"
+                    />
+                    <CardMovies.Overlay
+                      movie={movie}
+                      original_title={movie.title}
+                    />
+                  </CardMovies>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-10 bg-[#222222] rounded-lg border border-gray-700 border-dashed">
+              <p className="text-gray-400">
+                Belum ada film di daftar favoritmu.
+              </p>
+              <button
+                onClick={() => (window.location.href = "/movie")}
+                className="text-blue-500 text-sm mt-2 hover:underline"
+              >
+                Cari Film
+              </button>
+            </div>
+          )}
+        </div>
       </main>
 
-      <Footer></Footer>
+      <Footer />
     </div>
   );
 };
