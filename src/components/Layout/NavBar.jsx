@@ -95,15 +95,15 @@ const NavBar = () => {
           <div className="flex items-center gap-4">
             <Link
               to="/login"
-              className="text-white px-4 py-1.5 rounded-md text-sm font-medium hover:text-gray-300 transition-colors"
+              className="text-white px-4 py-1.5 rounded-md border border-white hover:border-gray-400 text-sm font-medium transition-colors"
             >
-              Sign in
+              Login
             </Link>
             <Link
               to="/register"
-              className="text-white px-4 py-1.5 rounded-md border border-gray-600 hover:border-gray-400 text-sm font-medium transition-colors"
+              className="text-white px-4 py-1.5 rounded-md border border-white hover:border-gray-400 text-sm font-medium transition-colors"
             >
-              Sign up
+              Register
             </Link>
           </div>
         )}

@@ -1,53 +1,71 @@
 import InputForm from "../Elements/Input/index.jsx";
 import Button from "../Elements/Button/Button.jsx";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-
-// Redux (Pastikan nama importnya sesuai authSlice yang baru)
-import { registerUser } from "../../store/authSlice";
+import { registerUser, reset } from "../../store/authSlice";
 
 const FormRegister = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // Ambil state dari Redux
-  const { loading, error } = useSelector((state) => state.auth);
+  // Ambil loading state dari Redux
+  const { isLoading } = useSelector((state) => state.auth);
 
-  // State untuk input form (Sesuai kolom Database)
+  // State Form
   const [fullname, setFullname] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState(""); // 1. State Baru
 
+  // State Error
   const [enterDetail, setEnterDetails] = useState("");
+
+  // Reset error saat halaman dibuka
+  useEffect(() => {
+    dispatch(reset());
+  }, [dispatch]);
 
   const handleRegister = (e) => {
     e.preventDefault();
+    setEnterDetails(""); // Bersihkan error lama
 
-    // Validasi kelengkapan data
-    if (!fullname || !username || !email || !password) {
+    // 2. Validasi Input Kosong
+    if (!fullname || !username || !email || !password || !confirmPassword) {
       setEnterDetails("Please fill in all fields!");
       return;
     }
 
-    // Bungkus data
+    // 3. Validasi Password Match
+    if (password !== confirmPassword) {
+      setEnterDetails("Passwords do not match!");
+      return;
+    }
+
     const userData = { fullname, username, email, password };
 
-    // Tembak ke Backend lewat Redux
     dispatch(registerUser(userData))
       .unwrap()
-      .then(() => {
+      .then((res) => {
+        // Sukses
+        alert(res.message || "Check your email to verify your account!");
         navigate("/login");
       })
       .catch((err) => {
-        console.error("Gagal Register:", err);
+        setEnterDetails(err);
       });
   };
 
   return (
     <>
-      <p className="text-red-600 text-center mb-2">{enterDetail}</p>
+      {/* Tampilan Error (Merah) */}
+      {enterDetail && (
+        <div className="bg-red-500/10 border border-red-500 rounded p-2 text-center mb-4">
+          <p className="text-white text-sm font-medium">{enterDetail}</p>
+        </div>
+      )}
+
       <form onSubmit={handleRegister} className="flex flex-col gap-4">
         <InputForm
           name="fullname"
@@ -58,7 +76,6 @@ const FormRegister = () => {
           placeholder="Enter your full name"
         />
 
-        {/* INPUT USERNAME */}
         <InputForm
           name="username"
           label="Username"
@@ -68,7 +85,6 @@ const FormRegister = () => {
           placeholder="Create Username"
         />
 
-        {/* INPUT EMAIL (BARU) */}
         <InputForm
           name="email"
           label="Email"
@@ -78,7 +94,6 @@ const FormRegister = () => {
           placeholder="example@mail.com"
         />
 
-        {/* INPUT PASSWORD */}
         <InputForm
           name="password"
           label="Password"
@@ -88,22 +103,27 @@ const FormRegister = () => {
           placeholder="****"
         />
 
+        {/* 5. Input Confirm Password (Baru) */}
+        <InputForm
+          name="confirmPassword"
+          label="Confirm Password"
+          type="password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          placeholder="Confirm your password"
+        />
+
         <Button
           type="submit"
-          disabled={loading}
+          disabled={isLoading}
           varian={`w-full py-3 rounded-full font-medium transition-colors ${
-            loading
+            isLoading
               ? "bg-gray-500 cursor-not-allowed"
               : "bg-[#3D4142] hover:bg-gray-700"
           }`}
         >
-          {loading ? "Registering..." : "Register"}
+          {isLoading ? "Registering..." : "Register"}
         </Button>
-        {error && (
-          <p className="text-red-500 text-sm text-center mt-2">
-            {typeof error === "string" ? error : error.message}
-          </p>
-        )}
       </form>
     </>
   );

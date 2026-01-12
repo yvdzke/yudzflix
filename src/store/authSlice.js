@@ -11,12 +11,19 @@ export const registerUser = createAsyncThunk(
   "auth/registerUser",
   async (userData, thunkAPI) => {
     try {
-      // userData isinya: { fullname, username, email, password }
       const response = await axios.post(`${API_URL}/register`, userData);
       return response.data;
     } catch (error) {
-      // Tangkap pesan error dari backend (misal: "Email sudah terdaftar")
-      const message = error.response?.data?.message || error.message;
+      // 🔥 LOGIC PENTING:
+      // Ambil pesan spesifik dari backend (error.response.data.message)
+      // Kalau gak ada pesan dari backend, baru pake error umum.
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+
       return thunkAPI.rejectWithValue(message);
     }
   }

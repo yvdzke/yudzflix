@@ -19,18 +19,17 @@ const FormLogin = () => {
   // State Lokal Form
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [localError, setLocalError] = useState("");
+  const [errMassege, setErrMassege] = useState("");
 
   const handleLogin = (e) => {
     e.preventDefault();
 
     if (!email || !password) {
-      setLocalError("Please enter your email and password");
+      setErrMassege("Please fill in all fields!");
       return;
     }
 
-    setLocalError("");
-
+    setErrMassege("");
     dispatch(loginUser({ email, password }))
       .unwrap()
       .then(() => {
@@ -38,19 +37,16 @@ const FormLogin = () => {
         // window.location.href = "/movie";
       })
       .catch((err) => {
-        // console.error("Login Gagal:", err);
-        setLocalError(err || "Incorrect Email or Password");
+        setErrMassege(err);
       });
   };
 
   return (
     <form onSubmit={handleLogin} className="space-y-4">
       {/* TAMPILAN ERROR */}
-      {(localError || error) && (
+      {errMassege && (
         <div className="bg-red-500/10 border border-red-500 rounded p-2 text-center">
-          <p className="text-red-500 text-sm font-medium">
-            {localError || (typeof error === "string" ? error : "Login Failed")}
-          </p>
+          <p className="text-white text-sm font-medium">{errMassege}</p>
         </div>
       )}
 
