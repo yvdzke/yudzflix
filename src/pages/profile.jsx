@@ -87,7 +87,7 @@ const ProfilePage = () => {
         uploadData.append("file", fileImage);
 
         const uploadRes = await axios.post(
-          `${API_BASE_URL}/api/upload/avatar`,
+          `${API_BASE_URL}/api/upload`,
           uploadData,
           {
             headers: { "Content-Type": "multipart/form-data" },
@@ -117,7 +117,7 @@ const ProfilePage = () => {
       // Tembak Endpoint PUT
       // INI YANG TADI KURANG! SEKARANG UDAH ADA.
       const updateRes = await axios.put(
-        `${API_BASE_URL}/api/users/profile`,
+        `${API_BASE_URL}/api/auth/profile`,
         bodyData,
         config
       );
