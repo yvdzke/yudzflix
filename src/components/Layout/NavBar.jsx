@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { MdMovie } from "react-icons/md";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { IoCaretDown } from "react-icons/io5";
+import { useDispatch, useSelector } from "react-redux"; // Pastikan import useSelector
+import { IoCaretDown, IoPersonCircle } from "react-icons/io5"; // Tambah icon default
 
 // Actions
 import { logoutUser } from "../../store/authSlice";
@@ -13,14 +13,17 @@ const NavBar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // 🔥 1. AMBIL DATA DARI REDUX (REAKTIF)
+  // Hapus baris 'const storedUser = ...' yang lama
+  const { user } = useSelector((state) => state.auth);
+
+  // Ambil nama dari redux, kalau user null kasih default kosong
+  const username = user ? user.username : "User";
+  const fullname = user ? user.fullname : "";
+
   // State lokal
   const [openProfile, setOpenProfile] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-
-  // ✅ AMBIL DATA USER (JANGAN DIHAPUS)
-  const storedUser = JSON.parse(localStorage.getItem("user"));
-  const username = storedUser ? storedUser.username : "User";
-  const fullname = storedUser ? storedUser.fullname : "";
 
   // Scroll Effect
   useEffect(() => {
@@ -58,7 +61,7 @@ const NavBar = () => {
           : "bg-transparent"
       }`}
     >
-      {/* === KIRI: LOGO + MENU === */}
+      {/* ... BAGIAN KIRI (LOGO) TETAP SAMA ... */}
       <div className="flex items-center gap-10">
         <Link
           to="/movie"
@@ -91,34 +94,42 @@ const NavBar = () => {
 
       {/* === KANAN: AUTH / PROFILE === */}
       <div>
-        {!hideAuthLinks && !storedUser && (
-          <div className="flex items-center gap-4">
-            <Link
-              to="/login"
-              className="text-white px-4 py-1.5 rounded-md border border-white hover:border-gray-400 text-sm font-medium transition-colors"
-            >
-              Login
-            </Link>
-            <Link
-              to="/register"
-              className="text-white px-4 py-1.5 rounded-md border border-white hover:border-gray-400 text-sm font-medium transition-colors"
-            >
-              Register
-            </Link>
-          </div>
-        )}
+        {!hideAuthLinks &&
+          !user && ( // Ganti !storedUser jadi !user
+            <div className="flex items-center gap-4">
+              <Link
+                to="/login"
+                className="text-white px-4 py-1.5 rounded-md border border-white hover:border-gray-400 text-sm font-medium transition-colors"
+              >
+                Login
+              </Link>
+              <Link
+                to="/register"
+                className="text-white px-4 py-1.5 rounded-md border border-white hover:border-gray-400 text-sm font-medium transition-colors"
+              >
+                Register
+              </Link>
+            </div>
+          )}
 
-        {storedUser && (
+        {user && ( // Ganti storedUser jadi user
           <div className="relative">
             <button
               onClick={() => setOpenProfile(!openProfile)}
               className="flex items-center gap-1 cursor-pointer focus:outline-none"
             >
-              <img
-                src="https://res.cloudinary.com/dvym5vxsw/image/upload/v1766191504/mypp_h0ujrc.jpg"
-                alt="profile"
-                className="w-8 h-8 rounded-full border border-gray-600"
-              />
+              {/* 🔥 2. GANTI IMG JADI DINAMIS */}
+              {/* Cek: Punya avatar gak? Kalo gak ada, pake Icon Default */}
+              {user.avatar ? (
+                <img
+                  src={user.avatar} // <-- INI KUNCINYA
+                  alt="profile"
+                  className="w-8 h-8 rounded-full border border-gray-600 object-cover"
+                />
+              ) : (
+                <IoPersonCircle className="w-8 h-8 text-gray-400" />
+              )}
+
               <IoCaretDown className="text-gray-400 text-xs mt-1" />
             </button>
 
@@ -140,6 +151,7 @@ const NavBar = () => {
                     )}
                   </div>
 
+                  {/* ... Menu Dropdown Sisanya Sama ... */}
                   <div className="py-2">
                     <button
                       onClick={() => {

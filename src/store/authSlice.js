@@ -14,9 +14,6 @@ export const registerUser = createAsyncThunk(
       const response = await axios.post(`${API_URL}/register`, userData);
       return response.data;
     } catch (error) {
-      // 🔥 LOGIC PENTING:
-      // Ambil pesan spesifik dari backend (error.response.data.message)
-      // Kalau gak ada pesan dari backend, baru pake error umum.
       const message =
         (error.response &&
           error.response.data &&
@@ -34,16 +31,14 @@ export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async (userData, thunkAPI) => {
     try {
-      // userData isinya: { email, password }
       const response = await axios.post(`${API_URL}/login`, userData);
 
-      // PENTING: Simpan Token & User ke LocalStorage biar sesi awet
       if (response.data.token) {
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("user", JSON.stringify(response.data.user));
       }
 
-      return response.data; // Isinya { message, token, user }
+      return response.data;
     } catch (error) {
       const message = error.response?.data?.message || error.message;
       return thunkAPI.rejectWithValue(message);
@@ -51,13 +46,13 @@ export const loginUser = createAsyncThunk(
   }
 );
 
-// 3. LOGOUT ACTION (Hapus jejak)
+// 3. LOGOUT ACTION
 export const logoutUser = createAsyncThunk("auth/logout", async () => {
   localStorage.removeItem("token");
   localStorage.removeItem("user");
 });
 
-// Initial State (Cek apakah ada data tersimpan sebelumnya?)
+// Initial State
 const userStorage = JSON.parse(localStorage.getItem("user"));
 const tokenStorage = localStorage.getItem("token");
 
@@ -74,11 +69,19 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
+    // Reset state loading/error
     reset: (state) => {
       state.isLoading = false;
       state.isSuccess = false;
       state.isError = false;
       state.message = "";
+    },
+
+    // 🔥 INI YANG BARU: UPDATE DATA USER MANUAL
+    // Dipanggil saat update profile berhasil
+    loginSuccess: (state, action) => {
+      state.user = action.payload;
+      // Kita update state usernya dengan data baru yang dikirim dari ProfilePage
     },
   },
   extraReducers: (builder) => {
@@ -90,13 +93,12 @@ const authSlice = createSlice({
       .addCase(registerUser.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        // Register biasanya gak langsung login, jadi user tetep null dulu
         state.message = action.payload.message;
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
-        state.message = action.payload; // Pesan error dari backend
+        state.message = action.payload;
       })
 
       // === LOGIN CASES ===
@@ -117,6 +119,7 @@ const authSlice = createSlice({
         state.token = null;
       })
 
+      // === LOGOUT CASES ===
       .addCase(logoutUser.fulfilled, (state) => {
         state.user = null;
         state.token = null;
@@ -124,5 +127,7 @@ const authSlice = createSlice({
   },
 });
 
-export const { reset } = authSlice.actions;
+// 🔥 JANGAN LUPA EXPORT loginSuccess DI SINI
+export const { reset, loginSuccess } = authSlice.actions;
+
 export default authSlice.reducer;
